@@ -158,6 +158,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
+    Android: com.appidea.thomasspuzzle
     Standalone: com.DefaultCompany.2DProject
   buildNumber:
     Standalone: 0
