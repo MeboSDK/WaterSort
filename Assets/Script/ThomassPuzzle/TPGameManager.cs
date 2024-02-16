@@ -1,0 +1,119 @@
+using ThomassPuzzle.Models;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using UnityEngine.UI;
+using ThomassPuzzle.Models.Level;
+using Unity.VisualScripting;
+using ThomassPuzzle.Services;
+using ThomassPuzzle.Enums;
+using TMPro;
+using UnityEngine.SceneManagement;
+namespace ThomassPuzzle
+{
+    public class TPGameManager : Singleton<TPGameManager>
+    {
+        #region Properties
+        [SerializeField] FlasksSpace Space;
+        [SerializeField] Text LvlName;
+        [SerializeField] int TestLevel;
+        [SerializeField] Text LvlTitle;
+        [SerializeField] Text WholeLvl;
+
+        public TextAsset jsonData;
+        private LevelGroup _levelData;
+
+        #region FPS Properties
+        [Space]
+        [Header("FPS")]
+        [SerializeField] LimitsEnum limit;
+        [SerializeField] TextMeshProUGUI FpsText;
+        private float pollingTime = 1f;
+        private float time;
+        private int frameCount;
+        #endregion
+
+        #endregion
+
+        public void RestartScene()
+        {
+            SceneManager.LoadScene("ThomassPuzzle");
+        }
+
+        void Start()
+        {
+            Application.targetFrameRate = (int)limit;
+
+            _levelData = JsonUtility.FromJson<LevelGroup>(jsonData.text);
+            GenerateLvl();
+        }
+        void Update()
+        {
+            // Update time.
+            time += Time.deltaTime;
+
+            // Count this frame.
+            frameCount++;
+
+            if (time >= pollingTime)
+            {
+                // Update frame rate.
+                int frameRate = Mathf.RoundToInt((float)frameCount / time);
+                FpsText.text = frameRate.ToString() + " fps";
+
+                // Reset time and frame count.
+                time -= pollingTime;
+                frameCount = 0;
+            }
+        }
+        public void GenerateLvl()
+        {
+            if (TestLevel > 0)
+                PlayerModel.SetPlayerCurrentLvl(TestLevel);
+
+            LvlName.text = "Level " + PlayerModel.CurrentLevel.ToString();
+            WholeLvl.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
+            Space.CreateFlasks(GetCurrentLvl());
+        }
+        public bool IsLvlDone(List<Flask> flasks)
+        {
+            var LiquidsList = flasks.Select(o => o.GetLiquidObjects());
+            var filledLiquids = LiquidsList.Where(o => o.Any(o => o.IsFilled()));
+            var isSameColors = filledLiquids.All(o => o.DistinctBy(o => o.GetImage().color).Count() == 1);
+            return isSameColors;
+        }
+        public void NextLvlGenerating()
+        {
+            if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)
+                ++PlayerModel.CurrentLevel;
+
+            Space.SavedGamePlays.Clear();
+            GenerateLvl();
+        }
+        public void Restart()
+        {
+            if (!TMGameService.RestartActions())
+                return;
+            GenerateLvl();
+        }
+        public void UndoAction()
+        {
+            TMGameService.UndoAction();
+        }
+        public void AddFlask()
+        {
+            if (Space.SelectedFlasks.Count > 0)
+                return;
+
+            var flask = Space.CreateFlask();
+
+            flask.ClearFlask();
+        }
+        private Level GetCurrentLvl()
+        {
+            var playerCurrentLvl = PlayerModel.CurrentLevel;
+
+            return _levelData.FirstOrDefault(o => o.no == playerCurrentLvl);
+        }
+    }
+}
