@@ -19,6 +19,7 @@ namespace ThomassPuzzle
         [SerializeField] int TestLevel;
         [SerializeField] Text LvlTitle;
         [SerializeField] Text WholeLvl;
+        [SerializeField] RectTransform NextLevelPanel;
 
         public TextAsset jsonData;
         private LevelGroup _levelData;
@@ -34,12 +35,6 @@ namespace ThomassPuzzle
         #endregion
 
         #endregion
-
-        public void RestartScene()
-        {
-            SceneManager.LoadScene("ThomassPuzzle");
-        }
-
         void Start()
         {
             Application.targetFrameRate = (int)limit;
@@ -68,6 +63,8 @@ namespace ThomassPuzzle
         }
         public void GenerateLvl()
         {
+            NextLevelPanel.gameObject.SetActive(false);
+
             if (TestLevel > 0)
                 PlayerModel.SetPlayerCurrentLvl(TestLevel);
 
@@ -82,7 +79,10 @@ namespace ThomassPuzzle
             var isSameColors = filledLiquids.All(o => o.DistinctBy(o => o.GetImage().color).Count() == 1);
             return isSameColors;
         }
-        public void NextLvlGenerating()
+        public void DoneLevel() => NextLevelPanel.gameObject.SetActive(true);
+        public void ResetSceneButton() =>
+            SceneManager.LoadScene("ThomassPuzzle");
+        public void NextLevelButton()
         {
             if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)
                 ++PlayerModel.CurrentLevel;
@@ -90,17 +90,17 @@ namespace ThomassPuzzle
             Space.SavedGamePlays.Clear();
             GenerateLvl();
         }
-        public void Restart()
+        public void RestartButton()
         {
             if (!TMGameService.RestartActions())
                 return;
             GenerateLvl();
         }
-        public void UndoAction()
+        public void UndoActionButton()
         {
             TMGameService.UndoAction();
         }
-        public void AddFlask()
+        public void AddFlaskButton()
         {
             if (Space.SelectedFlasks.Count > 0)
                 return;

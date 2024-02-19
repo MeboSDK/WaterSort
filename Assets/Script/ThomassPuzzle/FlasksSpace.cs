@@ -361,7 +361,7 @@ namespace ThomassPuzzle
             if (!SelectedFlasks.Exists(o => o?.GetFixedPosition() != o?.GetRect().anchoredPosition) && GameManager.IsLvlDone(AllFlasks))
             {
                 yield return new WaitForSeconds(.5f);
-                GameManager.NextLvlGenerating();
+                GameManager.DoneLevel();
             }
         }
         private void EndOperation(int selectedIndex = 0)
@@ -383,7 +383,9 @@ namespace ThomassPuzzle
                 SelectedFlasks.Clear();
                 AllFlasks.ForEach(flask =>
                 {
-                    flask.transform.SetSiblingIndex(AllFlasks.IndexOf(flask));
+                    if(flask.isActiveAndEnabled) { 
+                        flask.transform.SetSiblingIndex(AllFlasks.IndexOf(flask));
+                    }
                 });
             }
         }
