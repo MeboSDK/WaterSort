@@ -129,8 +129,8 @@ namespace ThomassPuzzle
 
         public void HandleClick()
         {
-            if (!isActivated)
-            { return; }
+      /*      if (!isActivated)
+            { return; }*/
             _parentSpace.SelectFlask(this);
         }
 

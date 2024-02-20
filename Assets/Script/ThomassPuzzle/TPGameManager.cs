@@ -92,17 +92,19 @@ namespace ThomassPuzzle
         }
         public void RestartButton()
         {
-            if (!TMGameService.RestartActions())
+            if (!TMGameService.RestartActions() || NextLevelPanel.gameObject.activeSelf)
                 return;
             GenerateLvl();
         }
         public void UndoActionButton()
         {
+            if(NextLevelPanel.gameObject.activeSelf)
+                return;
             TMGameService.UndoAction();
         }
         public void AddFlaskButton()
         {
-            if (Space.SelectedFlasks.Count > 0)
+            if (Space.SelectedFlasks.Count > 0 || NextLevelPanel.gameObject.activeSelf)
                 return;
 
             var flask = Space.CreateFlask();

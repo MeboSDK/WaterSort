@@ -213,8 +213,8 @@ namespace ThomassPuzzle
         private void MovingToTargetFlask(OperationModel operationModel)
         {
             var liquidLine = SetLiquidLine();
-
-            AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, .5f).OnComplete(() =>
+            
+            AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelay(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,
                     operationModel.SelectedTopIndex, liquidLine);
@@ -263,7 +263,7 @@ namespace ThomassPuzzle
                 yield return new WaitUntil(() => specialObjs.All(o => o.GetImage().fillAmount == 1f));
                 LiquidObject.delay = 0;
 
-                RotationBack(operationModel.SelectedFlask);
+                RotationBack(operationModel);
                 liquidLine.ShowLiquidLine(false, null);
             }
         }
@@ -340,22 +340,22 @@ namespace ThomassPuzzle
 
             return liquidLine;
         }
-        private void RotationBack(Flask selectedFlask)
+        private void RotationBack(OperationModel operationModel)
         {
-            selectedFlask.ReturnBack(.5f);
-            var liquidObjects = selectedFlask.GetLiquidObjects();
-            AnimationHelper.Rotate(selectedFlask.gameObject, 0, .5f).OnUpdate(() =>
+            float delay= CalculateDelay(operationModel);
+            operationModel.SelectedFlask.ReturnBack(delay);
+            var liquidObjects = operationModel.SelectedFlask.GetLiquidObjects();
+            AnimationHelper.Rotate(operationModel.SelectedFlask.gameObject, 0, .5f).OnUpdate(() =>
             {
-                var crtRadius = selectedFlask.transform.localEulerAngles.z;
-                selectedFlask.GetRatioBound().SetupRect(ref crtRadius, liquidObjects);
+                var crtRadius = operationModel.SelectedFlask.transform.localEulerAngles.z;
+                operationModel.SelectedFlask.GetRatioBound().SetupRect(ref crtRadius, liquidObjects);
             }).OnComplete(() =>
             {
-                EndOperation(SelectedFlasks.IndexOf(selectedFlask));
+                EndOperation(SelectedFlasks.IndexOf(operationModel.SelectedFlask));
 
                 StartCoroutine(FinishLevel());
             });
         }
-
         private IEnumerator FinishLevel()
         {
             if (!SelectedFlasks.Exists(o => o?.GetFixedPosition() != o?.GetRect().anchoredPosition) && GameManager.IsLvlDone(AllFlasks))
@@ -395,6 +395,16 @@ namespace ThomassPuzzle
             EndOperation(SelectedFlasks.IndexOf(selectedFlask));
         }
 
+        private float CalculateDelay(OperationModel operationModel)
+        {
+            var selectedFlaskRect = operationModel.SelectedFlask.GetFixedPosition();
+            var targetFlaskRect= operationModel.TargetFlask.GetRect().anchoredPosition;
+            var distance = Vector2.Distance(selectedFlaskRect, targetFlaskRect);
+            if (distance > 500)
+                return .5f;
+            else
+                return .3f;
+        }
     }
 
     #endregion
