@@ -155,7 +155,7 @@ namespace ThomassPuzzle
             if (liquidObjects.Any(o => o.GetImage().IsActive()))
             {
                 flask.SetFixedPosition(flask.GetRect().anchoredPosition);
-                flask.Button.enabled = false;
+                //flask.Button.enabled = false;
 
                 //Check if flask is empty.
                 GridLayout.enabled = false;

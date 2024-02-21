@@ -165,11 +165,14 @@ namespace ThomassPuzzle
         }
         public void MoveUp() =>
             transform.DOMoveY(transform.position.y + .5f, 0.1f);
-        public void MoveDown(float delay = 0.1f) =>
+        public void MoveDown(float delay = 0.1f)
+        {
+            Button.enabled = false;
             RectTransform.DOAnchorPosY(FixedPosition.y, delay).OnComplete(() =>
             {
                 Button.enabled = true;
             });
+        }
         public void ReturnBack(float delay = 0.1f) =>
             RectTransform.DOAnchorPos(FixedPosition, delay).OnComplete(() =>
             {
