@@ -61,11 +61,11 @@ namespace ThomassPuzzle
 
             // Calculate the position offset based on safe area
             Vector2 offsetMin = new Vector2(safeArea.xMin / canvas.scaleFactor, safeArea.yMin / canvas.scaleFactor);
-            Vector2 offsetMax = -offsetMin;
-  
-            offsetMax.y = -UIPanel.sizeDelta.y + UIPanel.anchoredPosition.y;
-            // Apply the offset values to the RectTransform
             rectTransform.offsetMin = offsetMin;
+
+            // Apply the offset values to the RectTransform
+            Vector2 offsetMax = -offsetMin;
+            offsetMax.y = -UIPanel.sizeDelta.y + UIPanel.anchoredPosition.y;
             rectTransform.offsetMax = offsetMax;
         }
 
@@ -394,17 +394,28 @@ namespace ThomassPuzzle
             selectedFlask.MoveDown();
             EndOperation(SelectedFlasks.IndexOf(selectedFlask));
         }
-
         private float CalculateDelay(OperationModel operationModel)
         {
-            var selectedFlaskRect = operationModel.SelectedFlask.GetFixedPosition();
-            var targetFlaskRect= operationModel.TargetFlask.GetRect().anchoredPosition;
-            var distance = Vector2.Distance(selectedFlaskRect, targetFlaskRect);
-            if (distance > 500)
-                return .5f;
+            var selectedFlaskIndex = AllFlasks.IndexOf(operationModel.SelectedFlask);
+            var targetFlaskIndex = AllFlasks.IndexOf(operationModel.TargetFlask) + 1;
+           
+            int flasksCountInRow = (int)(rectTransform.rect.width / 150);
+
+            var indexOfColumn = (targetFlaskIndex % flasksCountInRow) - 1;
+
+            float distance = selectedFlaskIndex - indexOfColumn;
+            
+            distance = distance < 0 ? -distance : distance;
+
+            float fixedDelay;
+            if (distance < 5)
+                fixedDelay = .3f;
             else
-                return .3f;
+                fixedDelay = .5f;
+
+            return fixedDelay;
         }
+
     }
 
     #endregion
