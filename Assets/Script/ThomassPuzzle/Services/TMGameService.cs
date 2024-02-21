@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using ThomassPuzzle.Enums;
+﻿using System.Linq;
 using ThomassPuzzle.Helpers;
 using ThomassPuzzle.Models;
 
@@ -17,11 +10,15 @@ namespace ThomassPuzzle.Services
         {
             var flaskSpace = FlasksSpace.Instance;
 
-            if (flaskSpace.SelectedFlasks.Count > 0)
-                return;
-
             if (flaskSpace.SavedGamePlays.Count == 0)
                 return;
+
+            if (flaskSpace.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
+                return;
+
+            var flask = flaskSpace.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
+            if (flask != default)
+                flaskSpace.FailedTry(flask);
 
             var lastAction = flaskSpace.SavedGamePlays.Peek();
 
@@ -51,9 +48,16 @@ namespace ThomassPuzzle.Services
         {
             var flaskSpace = FlasksSpace.Instance;
 
-            if (flaskSpace.SelectedFlasks.Count > 0)
+            if (flaskSpace.SavedGamePlays.Count == 0)
                 return false;
 
+            if (flaskSpace.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
+                return false;
+
+            var flask = flaskSpace.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
+
+            if (flask != default)
+                flaskSpace.FailedTry(flask);
 
             flaskSpace.LiquidLines.ForEach(o =>
             {

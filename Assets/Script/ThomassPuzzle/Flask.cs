@@ -105,32 +105,26 @@ namespace ThomassPuzzle
         [SerializeField] GameObject FinishedFlask;
 
         [DoNotSerialize] public Button Button;
-        
+
         private Vector2 FixedPosition;
 
         private FlasksSpace _parentSpace;
 
         private List<WaterColorEnum> _choosedColors;
 
-        private bool isActivated = false;
-
-
-
+        private bool MovedUp;
+        private bool InAction;
         #endregion
 
         #region  Methods
-        /*        public void Update()
-                {
-                    var crtRadius = transform.localEulerAngles.z;
-                    GetRatioBound().SetupRect(ref crtRadius, LiquidObjects);
-                }*/
-        private void Awake() => Invoke(nameof(Activate), 1);
-        private void Activate() => isActivated = true;
 
+        /*public void Update()
+          {
+          var crtRadius = transform.localEulerAngles.z;
+          GetRatioBound().SetupRect(ref crtRadius, LiquidObjects);
+          }*/
         public void HandleClick()
         {
-      /*      if (!isActivated)
-            { return; }*/
             _parentSpace.SelectFlask(this);
         }
 
@@ -171,12 +165,15 @@ namespace ThomassPuzzle
             RectTransform.DOAnchorPosY(FixedPosition.y, delay).OnComplete(() =>
             {
                 Button.enabled = true;
+                SetMovedUp(false);
             });
         }
         public void ReturnBack(float delay = 0.1f) =>
             RectTransform.DOAnchorPos(FixedPosition, delay).OnComplete(() =>
             {
                 Button.enabled = true;
+                SetMovedUp(false);
+                SetInAction(false);
             });
         public void SetFlaskSpace(FlasksSpace flastSpace) => _parentSpace = flastSpace;
         public LiquidObject[] GetLiquidObjects() => LiquidObjects;
@@ -187,12 +184,11 @@ namespace ThomassPuzzle
         public RectTransform GetDotRectForLiquidLine() => DotForLiquidLine;
         public Image GetContent() => Content;
         public WaterRationBound GetRatioBound() => RatioBound;
-
         public bool CheckFinishedFlask()
         {
             var liquidObjs = GetLiquidObjects();
             var color = liquidObjs[0].GetColorEnum();
-            if (liquidObjs.Any(o => o.GetColorEnum() != color) || color== WaterColorEnum.None)
+            if (liquidObjs.Any(o => o.GetColorEnum() != color) || color == WaterColorEnum.None)
             {
                 StartCoroutine(FlaskIsFinished(false));
                 return false;
@@ -205,10 +201,27 @@ namespace ThomassPuzzle
         {
             if (isFinished)
                 yield return new WaitUntil(() => GetLiquidObjects().All(o => o.GetImage().fillAmount == 1));
-           
+
             FinishedFlask.gameObject.SetActive(isFinished);
         }
 
+        public bool IsMovedUp()
+        {
+            return MovedUp;
+        }
+
+        public void SetMovedUp(bool movedUp)
+        {
+            MovedUp = movedUp;
+        }
+        public bool IsInAction()
+        {
+            return InAction;
+        }
+        public void SetInAction(bool inAction)
+        {
+            InAction = inAction;
+        }
         #endregion
 
     }

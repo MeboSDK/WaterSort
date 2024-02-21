@@ -155,14 +155,13 @@ namespace ThomassPuzzle
             if (liquidObjects.Any(o => o.GetImage().IsActive()))
             {
                 flask.SetFixedPosition(flask.GetRect().anchoredPosition);
-                //flask.Button.enabled = false;
 
                 //Check if flask is empty.
                 GridLayout.enabled = false;
                 SelectedFlasks.Add(flask);
                 flask.transform.SetSiblingIndex(transform.childCount - 1);
                 flask.MoveUp();
-
+                flask.SetMovedUp(true);
                 SelectedNTarget.SetForSpecialDic(SelectedFlasks.Count - 1, null);
             }
         }
@@ -213,7 +212,7 @@ namespace ThomassPuzzle
         private void MovingToTargetFlask(OperationModel operationModel)
         {
             var liquidLine = SetLiquidLine();
-            
+            operationModel.SelectedFlask.SetInAction(true);
             AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelay(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,
@@ -389,7 +388,7 @@ namespace ThomassPuzzle
                 });
             }
         }
-        private void FailedTry(Flask selectedFlask)
+        public void FailedTry(Flask selectedFlask)
         {
             selectedFlask.MoveDown();
             EndOperation(SelectedFlasks.IndexOf(selectedFlask));

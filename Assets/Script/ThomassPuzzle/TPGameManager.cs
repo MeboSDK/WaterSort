@@ -104,12 +104,23 @@ namespace ThomassPuzzle
         }
         public void AddFlaskButton()
         {
-            if (Space.SelectedFlasks.Count > 0 || NextLevelPanel.gameObject.activeSelf)
+            if (NextLevelPanel.gameObject.activeSelf)
+                return;
+            //If some of cup is in action
+            if (Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
                 return;
 
             var flask = Space.CreateFlask();
 
             flask.ClearFlask();
+    
+            var selectedFlask = Space.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
+
+            if (selectedFlask != default)
+            {
+                selectedFlask.MoveDown();
+                Space.FailedTry(selectedFlask);
+            }
         }
         private Level GetCurrentLvl()
         {
