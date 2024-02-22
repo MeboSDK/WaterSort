@@ -77,7 +77,7 @@ namespace ThomassPuzzle
             if (flask == null)
                 return;
 
-            Rect.SetSiblingIndex(0);
+            Rect.SetAsFirstSibling();
             Rect.position =
                 new Vector3(flask.GetDotRectForLiquidLine().position.x, flask.GetDotRectForLiquidLine().position.y, 0);
 

@@ -159,7 +159,7 @@ namespace ThomassPuzzle
                 //Check if flask is empty.
                 GridLayout.enabled = false;
                 SelectedFlasks.Add(flask);
-                flask.transform.SetSiblingIndex(transform.childCount - 1);
+                flask.transform.SetAsLastSibling();
                 flask.MoveUp();
                 flask.SetMovedUp(true);
                 SelectedNTarget.SetForSpecialDic(SelectedFlasks.Count - 1, null);

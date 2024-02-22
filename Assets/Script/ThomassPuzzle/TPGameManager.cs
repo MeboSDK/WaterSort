@@ -80,6 +80,14 @@ namespace ThomassPuzzle
             return isSameColors;
         }
         public void DoneLevel() => NextLevelPanel.gameObject.SetActive(true);
+        private Level GetCurrentLvl()
+        {
+            var playerCurrentLvl = PlayerModel.CurrentLevel;
+
+            return _levelData.FirstOrDefault(o => o.no == playerCurrentLvl);
+        }
+
+        #region Buttons
         public void ResetSceneButton() =>
             SceneManager.LoadScene("ThomassPuzzle");
         public void NextLevelButton()
@@ -122,11 +130,7 @@ namespace ThomassPuzzle
                 Space.FailedTry(selectedFlask);
             }
         }
-        private Level GetCurrentLvl()
-        {
-            var playerCurrentLvl = PlayerModel.CurrentLevel;
 
-            return _levelData.FirstOrDefault(o => o.no == playerCurrentLvl);
-        }
+        #endregion
     }
 }
