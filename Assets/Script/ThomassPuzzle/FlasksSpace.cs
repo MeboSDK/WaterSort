@@ -249,7 +249,7 @@ namespace ThomassPuzzle
             StartCoroutine(TranslateLiquidObjects(operationModel, selectedTopIndex));
             selectedTopIndex--;
 
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.55f);
 
 
             if (selectedTopIndex >= 0 && operationModel.TargetLiquidObjects.Any(o => o.GetImage().fillAmount == 0 && o.IsFilled()) &&
