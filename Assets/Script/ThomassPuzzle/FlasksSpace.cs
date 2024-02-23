@@ -14,6 +14,7 @@ using ThomassPuzzle.Models.Flask;
 using ThomassPuzzle.Services;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
+using static UnityEngine.UI.GridLayoutGroup;
 
 namespace ThomassPuzzle
 {
@@ -44,6 +45,7 @@ namespace ThomassPuzzle
         [DoNotSerialize] public Dictionary<int, Flask> SelectedNTarget = new Dictionary<int, Flask>() { };
 
         [DoNotSerialize] public Stack<SaveGamePlay> SavedGamePlays = new Stack<SaveGamePlay>();
+
         #endregion
 
         #region  Public Methods
@@ -68,7 +70,6 @@ namespace ThomassPuzzle
             offsetMax.y = -UIPanel.sizeDelta.y + UIPanel.anchoredPosition.y;
             rectTransform.offsetMax = offsetMax;
         }
-
         public Flask CreateFlask()
         {
             GridLayout.enabled = true;
@@ -83,7 +84,6 @@ namespace ThomassPuzzle
             }
 
             flaskObj.transform.SetSiblingIndex(AllFlasks.IndexOf(flaskObj));
-
             return flaskObj;
 
         }
@@ -117,7 +117,6 @@ namespace ThomassPuzzle
         }
         public void SelectFlask(Flask flask)
         {
-
             int existsIndex = SelectedFlasks.IndexOf(flask);
             if (SelectedFlasks.Count > 0 && SelectedNTarget.ContainsValue(null))
             {
@@ -143,7 +142,12 @@ namespace ThomassPuzzle
 
             OperationModel operationModel = new OperationModel(SelectedFlasks[SelectedFlasks.Count - 1], flask);
 
-            FromFlaskToFlask(operationModel);
+            MovingToTargetFlask(operationModel);
+        }
+        public void FailedTry(Flask selectedFlask)
+        {
+            selectedFlask.MoveDown();
+            EndOperation(SelectedFlasks.IndexOf(selectedFlask));
         }
 
         #endregion
@@ -165,55 +169,19 @@ namespace ThomassPuzzle
                 SelectedNTarget.SetForSpecialDic(SelectedFlasks.Count - 1, null);
             }
         }
-        private bool ConsiderColors(OperationModel operationModel)
-        {
-            var selectedLiquidObjects = operationModel.SelectedLiquidObjects;
-            var selectedTopIndex = operationModel.SelectedTopIndex;
-            var targetLiquidObjects = operationModel.TargetLiquidObjects;
-            var targetTopIndex = operationModel.TargetTopIndex;
 
-            var selectedColor = selectedLiquidObjects[selectedTopIndex].GetColorEnum();
-
-            if (selectedTopIndex == -1)
-                return false;
-            if (targetTopIndex != -1)
-                if (selectedColor != targetLiquidObjects[targetTopIndex].GetColorEnum())
-                {
-                    FailedTry(operationModel.SelectedFlask);
-                    return false;
-                }
-
-            return true;
-        }
-        private void GainTargetLiquidObjects(OperationModel operationModel)
-        {
-            if (operationModel.TargetTopIndex != -1)
-                FillingTargetFlask(operationModel, operationModel.TargetLiquidObjects[operationModel.TargetTopIndex].GetColorEnum());
-            else
-            {
-                var savedColor = operationModel.SelectedLiquidObjects[operationModel.SelectedTopIndex].GetColorEnum();
-                FillingTargetFlask(operationModel, savedColor);
-            }
-        }
-        private void FromFlaskToFlask(OperationModel operationModel)
+        private void MovingToTargetFlask(OperationModel operationModel)
         {
             // Get all liquids from target flask
-
             if (operationModel.TargetTopIndex == 3 || !ConsiderColors(operationModel))
             {
                 FailedTry(operationModel.SelectedFlask);
                 return;
             }
 
-            GainTargetLiquidObjects(operationModel);
-
-            MovingToTargetFlask(operationModel);
-        }
-        private void MovingToTargetFlask(OperationModel operationModel)
-        {
             var liquidLine = SetLiquidLine();
             operationModel.SelectedFlask.SetInAction(true);
-            AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelay(operationModel)).OnComplete(() =>
+            AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelayForMoving(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,
                     operationModel.SelectedTopIndex, liquidLine);
@@ -234,8 +202,6 @@ namespace ThomassPuzzle
 
                 if (crtRadius >= -midRadius && !entered)
                 {
-                    liquidLine.ShowLiquidLine(true, operationModel.TargetFlask, operationModel.SelectedLiquidObjects[selectedTopIndex].GetImage().color);
-                    liquidLine.SetDeltaSize(operationModel.SelectedFlask.GetRect().anchoredPosition);
                     StartCoroutine(TransferringWithUI(operationModel,
                                                       selectedTopIndex,
                                                       liquidLine));
@@ -244,21 +210,29 @@ namespace ThomassPuzzle
                 }
             });
         }
-        public IEnumerator TransferringWithUI(OperationModel operationModel, int selectedTopIndex, LiquidLine liquidLine)
+        private IEnumerator TransferringWithUI(OperationModel operationModel, int selectedTopIndex, LiquidLine liquidLine)
         {
+            //We need to appear liquid line
+            liquidLine.ShowLiquidLine(true, operationModel.TargetFlask, operationModel.SelectedLiquidObjects[selectedTopIndex].GetImage().color);
+            liquidLine.SetDeltaSize(operationModel.SelectedFlask.GetRect().anchoredPosition);
+
             StartCoroutine(TranslateLiquidObjects(operationModel, selectedTopIndex));
             selectedTopIndex--;
 
+            //Wait liquid objects are transferring
             yield return new WaitForSeconds(.55f);
 
-
+            //It's time for next liquid objects
             if (selectedTopIndex >= 0 && operationModel.TargetLiquidObjects.Any(o => o.GetImage().fillAmount == 0 && o.IsFilled()) &&
                  operationModel.SelectedLiquidObjects[selectedTopIndex].GetColorEnum() == operationModel.TargetLiquidObjects[operationModel.TargetFlask.TopLiquidItemIndex()].GetColorEnum())
                 Rotation(operationModel, selectedTopIndex, liquidLine);
             else
             {
+                //There is no color for transferring in the flask,so flask needs to return back.
+                //Let's do some quick casting for the last liquid object
                 LiquidObject.delay = .03f;
                 var specialObjs = operationModel.TargetLiquidObjects.Where(o => o.IsFilled() && o.LastFlask == operationModel.SelectedFlask);
+
                 yield return new WaitUntil(() => specialObjs.All(o => o.GetImage().fillAmount == 1f));
                 LiquidObject.delay = 0;
 
@@ -272,56 +246,21 @@ namespace ThomassPuzzle
             o.IsFilled() &&
             o.LastFlask == operationModel.SelectedFlask);
 
+            //Clear selected flask's liquid object
             var from = operationModel.SelectedLiquidObjects[selectedTopIndex];
             StartCoroutine(from.MinimizeLiquid());
 
+            //Wait for last liquid object to fill
             if (index - 1 > -1)
                 yield return new WaitUntil(() => operationModel.TargetLiquidObjects[index - 1].GetImage().fillAmount == 1f);
 
+            //Fill target flask's liquid object
             var to = operationModel.TargetLiquidObjects.First(o =>
             o.GetImage().fillAmount == 0 &&
             o.IsFilled() &&
             o.LastFlask == operationModel.SelectedFlask);
 
             StartCoroutine(to.MaximazeLiquid());
-        }
-        private void FillingTargetFlask(OperationModel operationModel, WaterColorEnum comparisonColor)
-        {
-            var targetLqdsIndex = operationModel.TargetTopIndex;
-            var liquidObjects = operationModel.SelectedLiquidObjects;
-            var topLiquidItemIndex = operationModel.SelectedTopIndex;
-
-            SaveGamePlay saveGamePlay = new SaveGamePlay()
-            {
-                Color = (WaterColorEnum)Enum.Parse(typeof(WaterColorEnum), liquidObjects[topLiquidItemIndex].name),
-                SelectedFlask = operationModel.SelectedFlask,
-                TargetFlask = operationModel.TargetFlask
-            };
-
-            bool changedSomething = false;
-
-            while (liquidObjects[topLiquidItemIndex].GetColorEnum() == comparisonColor)
-            {
-                ColorModel colorModel = ColorsHelper.GetColor((WaterColorEnum)Enum.Parse(typeof(WaterColorEnum), liquidObjects[topLiquidItemIndex].name));
-
-                targetLqdsIndex++;
-                if (targetLqdsIndex > 3)
-                    break;
-
-                operationModel.TargetLiquidObjects[targetLqdsIndex].Fill(colorModel, 0);
-                operationModel.TargetLiquidObjects[targetLqdsIndex].LastFlask = operationModel.SelectedFlask;
-                saveGamePlay.SelectedLiquidIndex.Push(topLiquidItemIndex);
-                saveGamePlay.TargetLiquidIndex.Push(targetLqdsIndex);
-
-                changedSomething = true;
-                topLiquidItemIndex--;
-
-                //Break for avoid exception.
-                if (topLiquidItemIndex < 0)
-                    break;
-            }
-            if (changedSomething)
-                SavedGamePlays.Push(saveGamePlay);
         }
         private LiquidLine SetLiquidLine()
         {
@@ -341,7 +280,7 @@ namespace ThomassPuzzle
         }
         private void RotationBack(OperationModel operationModel)
         {
-            float delay= CalculateDelay(operationModel);
+            float delay = CalculateDelayForMoving(operationModel);
             operationModel.SelectedFlask.ReturnBack(delay);
             var liquidObjects = operationModel.SelectedFlask.GetLiquidObjects();
             AnimationHelper.Rotate(operationModel.SelectedFlask.gameObject, 0, .5f).OnUpdate(() =>
@@ -382,28 +321,23 @@ namespace ThomassPuzzle
                 SelectedFlasks.Clear();
                 AllFlasks.ForEach(flask =>
                 {
-                    if(flask.isActiveAndEnabled) { 
+                    if (flask.isActiveAndEnabled)
+                    {
                         flask.transform.SetSiblingIndex(AllFlasks.IndexOf(flask));
                     }
                 });
             }
         }
-        public void FailedTry(Flask selectedFlask)
-        {
-            selectedFlask.MoveDown();
-            EndOperation(SelectedFlasks.IndexOf(selectedFlask));
-        }
-        private float CalculateDelay(OperationModel operationModel)
+        private float CalculateDelayForMoving(OperationModel operationModel)
         {
             var selectedFlaskIndex = AllFlasks.IndexOf(operationModel.SelectedFlask);
             var targetFlaskIndex = AllFlasks.IndexOf(operationModel.TargetFlask) + 1;
-           
             int flasksCountInRow = (int)(rectTransform.rect.width / 150);
 
             var indexOfColumn = (targetFlaskIndex % flasksCountInRow) - 1;
 
             float distance = selectedFlaskIndex - indexOfColumn;
-            
+
             distance = distance < 0 ? -distance : distance;
 
             float fixedDelay;
@@ -415,6 +349,82 @@ namespace ThomassPuzzle
             return fixedDelay;
         }
 
+        public void CalculateGridConstraint()
+        {
+            int flasksCountInRow = (int)(rectTransform.rect.width / 150);
+
+            var activatedFlasksCount = AllFlasks.Count(o => o.isActiveAndEnabled);
+        }
+        private bool ConsiderColors(OperationModel operationModel)
+        {
+            var selectedLiquidObjects = operationModel.SelectedLiquidObjects;
+            var selectedTopIndex = operationModel.SelectedTopIndex;
+            var targetLiquidObjects = operationModel.TargetLiquidObjects;
+            var targetTopIndex = operationModel.TargetTopIndex;
+
+            var selectedColor = selectedLiquidObjects[selectedTopIndex].GetColorEnum();
+
+            if (selectedTopIndex == -1)
+                return false;
+            if (targetTopIndex != -1)
+                if (selectedColor != targetLiquidObjects[targetTopIndex].GetColorEnum())
+                {
+                    FailedTry(operationModel.SelectedFlask);
+                    return false;
+                }
+
+            GainTargetLiquidObjects(operationModel);
+
+            return true;
+        }
+        private void GainTargetLiquidObjects(OperationModel operationModel)
+        {
+            if (operationModel.TargetTopIndex != -1)
+                FillingTargetFlask(operationModel, operationModel.TargetLiquidObjects[operationModel.TargetTopIndex].GetColorEnum());
+            else
+            {
+                var savedColor = operationModel.SelectedLiquidObjects[operationModel.SelectedTopIndex].GetColorEnum();
+                FillingTargetFlask(operationModel, savedColor);
+            }
+        }
+        private void FillingTargetFlask(OperationModel operationModel, WaterColorEnum comparisonColor)
+        {
+            var targetLqdsIndex = operationModel.TargetTopIndex;
+            var liquidObjects = operationModel.SelectedLiquidObjects;
+            var topLiquidItemIndex = operationModel.SelectedTopIndex;
+
+            SaveGamePlay saveGamePlay = new SaveGamePlay()
+            {
+                Color = (WaterColorEnum)Enum.Parse(typeof(WaterColorEnum), liquidObjects[topLiquidItemIndex].name),
+                SelectedFlask = operationModel.SelectedFlask,
+                TargetFlask = operationModel.TargetFlask
+            };
+
+            bool changedSomething = false;
+
+            while (liquidObjects[topLiquidItemIndex].GetColorEnum() == comparisonColor)
+            {
+                ColorModel colorModel = ColorsHelper.GetColor((WaterColorEnum)Enum.Parse(typeof(WaterColorEnum), liquidObjects[topLiquidItemIndex].name));
+
+                targetLqdsIndex++;
+                if (targetLqdsIndex > 3)
+                    break;
+
+                operationModel.TargetLiquidObjects[targetLqdsIndex].Fill(colorModel, 0);
+                operationModel.TargetLiquidObjects[targetLqdsIndex].LastFlask = operationModel.SelectedFlask;
+                saveGamePlay.SelectedLiquidIndex.Push(topLiquidItemIndex);
+                saveGamePlay.TargetLiquidIndex.Push(targetLqdsIndex);
+
+                changedSomething = true;
+                topLiquidItemIndex--;
+
+                //Break for avoid exception.
+                if (topLiquidItemIndex < 0)
+                    break;
+            }
+            if (changedSomething)
+                SavedGamePlays.Push(saveGamePlay);
+        }
     }
 
     #endregion
