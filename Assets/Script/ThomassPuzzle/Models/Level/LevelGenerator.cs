@@ -1,7 +1,6 @@
 ﻿#if UNITY_EDITOR
 
 using UnityEngine;
-using ThomassPuzzle.Managers;
 
 namespace ThomassPuzzle.Models.Level
 {
@@ -10,11 +9,6 @@ namespace ThomassPuzzle.Models.Level
         [SerializeField] private Vector2Int _targetGroupRange;
         [SerializeField] private Vector2Int _extraHolderRange;
         [SerializeField] private int _targetLevelCount;
-
-        public static void Open()
-        {
-            GamePlayEditorManager.OpenScriptableAtDefault<LevelGenerator>();
-        }
     }
 
     public partial class LevelGenerator

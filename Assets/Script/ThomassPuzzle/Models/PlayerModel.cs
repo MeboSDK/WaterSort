@@ -18,7 +18,6 @@ namespace ThomassPuzzle.Models
                 SetPlayerCurrentLvl(value);
             } 
         }
-
         public static void SetPlayerCurrentLvl(int lvl)
         {
             PlayerPrefs.SetInt("CurrentLvl", lvl);

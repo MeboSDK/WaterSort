@@ -7,14 +7,15 @@ namespace ThomassPuzzle
 {
     public class LiquidObject : MonoBehaviour
     {
+        #region Fields
         [SerializeField] Image Image;
-
         [SerializeField] bool Filled;
-
-        public Flask LastFlask;
-
-        public static float delay = 0;
         private WaterColorEnum colorEnum;
+        public Flask LastFlask;
+        public static float delay = 0;
+        #endregion
+
+        #region Methods
         public void Fill(ColorModel colorModel, int fillAmount)
         {
             Image.color = colorModel.Color;
@@ -49,7 +50,6 @@ namespace ThomassPuzzle
         {
             return Image;
         }
-     
         public IEnumerator MinimizeLiquid()
         {
             for (int i = 0; i < 10; i++)
@@ -76,5 +76,7 @@ namespace ThomassPuzzle
         {
             liquid.GetImage().fillAmount += 0.1f;
         }
+
+        #endregion 
     }
 }

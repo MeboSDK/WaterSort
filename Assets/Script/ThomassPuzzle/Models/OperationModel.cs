@@ -14,15 +14,9 @@ namespace ThomassPuzzle.Models
             TargetFlask = targetFlask;
         }
         private int _targetTopIndex = -1;
-        public ThomassPuzzle.Flask SelectedFlask { get; set; }
-        public ThomassPuzzle.Flask TargetFlask { get; set; }
-        public int SelectedTopIndex
-        {
-            get
-            {
-                return SelectedFlask.TopLiquidItemIndex();
-            }
-        }
+        public ThomassPuzzle.Flask SelectedFlask;
+        public ThomassPuzzle.Flask TargetFlask;
+        public int SelectedTopIndex => SelectedFlask.TopLiquidItemIndex();
         public int TargetTopIndex
         {
             get
@@ -35,19 +29,7 @@ namespace ThomassPuzzle.Models
             set =>
                 _targetTopIndex = value;
         }
-        public LiquidObject[] SelectedLiquidObjects
-        {
-            get
-            {
-                return SelectedFlask?.GetLiquidObjects();
-            }
-        }
-        public LiquidObject[] TargetLiquidObjects
-        {
-            get
-            {
-                return TargetFlask?.GetLiquidObjects();
-            }
-        }
+        public LiquidObject[] SelectedLiquidObjects => SelectedFlask?.GetLiquidObjects();
+        public LiquidObject[] TargetLiquidObjects => TargetFlask?.GetLiquidObjects();
     }
 }

@@ -117,17 +117,10 @@ namespace ThomassPuzzle
         #endregion
 
         #region  Methods
-
-        /*public void Update()
-          {
-          var crtRadius = transform.localEulerAngles.z;
-          GetRatioBound().SetupRect(ref crtRadius, LiquidObjects);
-          }*/
         public void HandleClick()
         {
             _parentSpace.SelectFlask(this);
         }
-
         public void ClearFlask()
         {
             for (int i = 0; i < LiquidObjects.Length; i++)
@@ -204,24 +197,10 @@ namespace ThomassPuzzle
 
             FinishedFlask.gameObject.SetActive(isFinished);
         }
-
-        public bool IsMovedUp()
-        {
-            return MovedUp;
-        }
-
-        public void SetMovedUp(bool movedUp)
-        {
-            MovedUp = movedUp;
-        }
-        public bool IsInAction()
-        {
-            return InAction;
-        }
-        public void SetInAction(bool inAction)
-        {
-            InAction = inAction;
-        }
+        public bool IsMovedUp() => MovedUp;
+        public void SetMovedUp(bool movedUp) => MovedUp = movedUp;
+        public bool IsInAction() => InAction;
+        public void SetInAction(bool inAction) => InAction = inAction;
         #endregion
 
     }

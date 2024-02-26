@@ -27,7 +27,6 @@ namespace ThomassPuzzle.Services
             _targetLevelCountProperty = serializedObject.FindProperty(LevelGenerator.TARGET_LEVEL_COUNT);
         }
 
-
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -82,11 +81,11 @@ namespace ThomassPuzzle.Services
 
                     levels.Add(new Level
                     {
-                        map = generateLevel.Select(items => new LevelColumn
+                        flaks = generateLevel.Select(items => new LevelColumn
                         {
-                            values = items.ToList()
+                            colors = items.ToList()
                         }).ToList(),
-                        no = i + 1
+                        lvl = i + 1
                     });
                 }
 
@@ -121,7 +120,6 @@ namespace ThomassPuzzle.Services
 
             return holders.Select(items => items.ToArray());
         }
-
     }
 #endif
 }

@@ -7,16 +7,17 @@ namespace ThomassPuzzle
 {
     public class LiquidLine : MonoBehaviour
     {
-
+        #region Fields
         [SerializeField] RectTransform Rect;
         [SerializeField] Image Line;
         [SerializeField] RectTransform TopRect;
         [SerializeField] RectTransform BottomRect;
-
+        [DoNotSerialize] public bool Used = false;
         private Vector2 _fixedSizeDelta;
         private int _fixedIndex;
+        #endregion
 
-        [DoNotSerialize] public bool Used = false;
+        #region Methods
         public void SetDeltaSize(Vector2 selected)
         {
             if (_fixedSizeDelta != default(Vector2))
@@ -92,5 +93,7 @@ namespace ThomassPuzzle
         public Vector2 GetFixedSizeDelta() => _fixedSizeDelta; 
         public void SetFixedIndex(int index) => _fixedIndex = index;
         public int GetFixedIndex() => _fixedIndex;
+        
+        #endregion
     }
 }

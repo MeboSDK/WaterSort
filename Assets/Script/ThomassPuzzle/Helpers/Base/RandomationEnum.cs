@@ -13,11 +13,9 @@ namespace ThomassPuzzle.Helpers.Base
             // Get all enum values
             Array enumValues = Enum.GetValues(typeof(T));
 
-            // Get a random index
-            int randomIndex = RandomationNumber.GetRandomNumber(enumValues.Length);
-
+            Random random = new Random();
             // Return the random enum value
-            return (T)enumValues.GetValue(randomIndex);
+            return (T)enumValues.GetValue(random.Next(enumValues.Length));
         }
 
     }

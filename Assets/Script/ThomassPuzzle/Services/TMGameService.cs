@@ -37,13 +37,6 @@ namespace ThomassPuzzle.Services
             flaskSpace.SavedGamePlays.Pop();
         }
 
-        public static void ClearSavedActions()
-        {
-            var flaskSpace = FlasksSpace.Instance;
-
-            flaskSpace.SavedGamePlays.Clear();
-        }
-
         public static bool RestartActions()
         {
             var flaskSpace = FlasksSpace.Instance;
@@ -69,7 +62,17 @@ namespace ThomassPuzzle.Services
                 o.SetFixedPosition(default);
             });
 
+            ClearSavedActions();
+
             return true;
         }
+
+        public static void ClearSavedActions()
+        {
+            var flaskSpace = FlasksSpace.Instance;
+
+            flaskSpace.SavedGamePlays.Clear();
+        }
+
     }
 }

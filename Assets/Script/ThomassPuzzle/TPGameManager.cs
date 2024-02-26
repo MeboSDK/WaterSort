@@ -13,7 +13,7 @@ namespace ThomassPuzzle
 {
     public class TPGameManager : Singleton<TPGameManager>
     {
-        #region Properties
+        #region Fields
         [SerializeField] FlasksSpace Space;
         [SerializeField] Text LvlName;
         [SerializeField] int TestLevel;
@@ -35,11 +35,14 @@ namespace ThomassPuzzle
         #endregion
 
         #endregion
+
+        #region Methods
         void Start()
         {
             Application.targetFrameRate = (int)limit;
 
             _levelData = JsonUtility.FromJson<LevelGroup>(jsonData.text);
+
             GenerateLvl();
         }
         void Update()
@@ -85,7 +88,7 @@ namespace ThomassPuzzle
         {
             var playerCurrentLvl = PlayerModel.CurrentLevel;
 
-            return _levelData.FirstOrDefault(o => o.no == playerCurrentLvl);
+            return _levelData.FirstOrDefault(o => o.lvl == playerCurrentLvl);
         }
 
         #region Buttons
@@ -133,6 +136,8 @@ namespace ThomassPuzzle
             
             Space.CalculateGridConstraint();
         }
+
+        #endregion
 
         #endregion
     }

@@ -11,10 +11,10 @@ namespace ThomassPuzzle.Models
 {
     public class SaveGamePlay
     {
-        public ThomassPuzzle.Flask SelectedFlask { get; set; }
-        public ThomassPuzzle.Flask TargetFlask { get; set; }
-        public WaterColorEnum Color { get; set; }
-        public Stack<int> SelectedLiquidIndex { get; set; } = new Stack<int>();
-        public Stack<int> TargetLiquidIndex { get; set; } = new Stack<int>();
+        public ThomassPuzzle.Flask SelectedFlask;
+        public ThomassPuzzle.Flask TargetFlask;
+        public WaterColorEnum Color;
+        public Stack<int> SelectedLiquidIndex = new Stack<int>();
+        public Stack<int> TargetLiquidIndex = new Stack<int>();
     }
 }
