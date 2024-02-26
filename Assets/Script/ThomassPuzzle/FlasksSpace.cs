@@ -84,8 +84,8 @@ namespace ThomassPuzzle
             }
 
             flaskObj.transform.SetSiblingIndex(AllFlasks.IndexOf(flaskObj));
-            return flaskObj;
 
+            return flaskObj;
         }
         public void CreateFlasks(Level lvl)
         {
@@ -330,13 +330,15 @@ namespace ThomassPuzzle
         }
         private float CalculateDelayForMoving(OperationModel operationModel)
         {
-            var selectedFlaskIndex = AllFlasks.IndexOf(operationModel.SelectedFlask);
+            int flasksCountInRow = CalculateFlasksCountInRow();
+            var selectedFlaskIndex = AllFlasks.IndexOf(operationModel.SelectedFlask) + 1;
             var targetFlaskIndex = AllFlasks.IndexOf(operationModel.TargetFlask) + 1;
-            int flasksCountInRow = (int)(rectTransform.rect.width / 150);
+            //int flasksCountInRow = (int)(rectTransform.rect.width / 150);
 
-            var indexOfColumn = (targetFlaskIndex % flasksCountInRow) - 1;
+            var indexOfselectedColumn = (selectedFlaskIndex % flasksCountInRow == 0 ? flasksCountInRow : selectedFlaskIndex % flasksCountInRow) - 1;
+            var indexOftargetColumn = (targetFlaskIndex % flasksCountInRow == 0 ? flasksCountInRow : targetFlaskIndex % flasksCountInRow) - 1;
 
-            float distance = selectedFlaskIndex - indexOfColumn;
+            float distance = indexOfselectedColumn - indexOftargetColumn;
 
             distance = distance < 0 ? -distance : distance;
 
@@ -348,12 +350,43 @@ namespace ThomassPuzzle
 
             return fixedDelay;
         }
+        public int CalculateFlasksCountInRow()
+        {
+            var activatedFlasksCount = AllFlasks.Count(o => o.isActiveAndEnabled);
 
+            if (activatedFlasksCount > 5 && activatedFlasksCount < 10)
+                return 5;
+            else
+            {
+                float splited = (float)activatedFlasksCount / GridLayout.constraintCount;
+                int roundedUp = (int)Math.Ceiling(splited);
+                return roundedUp;
+            }
+        }
         public void CalculateGridConstraint()
         {
             int flasksCountInRow = (int)(rectTransform.rect.width / 150);
 
             var activatedFlasksCount = AllFlasks.Count(o => o.isActiveAndEnabled);
+
+            if (activatedFlasksCount > 5 && activatedFlasksCount < 10)
+            {
+                GridLayout.constraint = Constraint.FixedColumnCount;
+                GridLayout.constraintCount = 5;
+            }
+            else if (0 == activatedFlasksCount % flasksCountInRow && activatedFlasksCount != flasksCountInRow)
+                GridLayout.constraintCount += 1;
+            else if (activatedFlasksCount >= 10)
+            {
+                GridLayout.constraint = Constraint.FixedRowCount;
+                if (GridLayout.constraintCount == 5)
+                    GridLayout.constraintCount = 2;
+            }
+            else
+            {
+                GridLayout.constraint = Constraint.FixedRowCount;
+                GridLayout.constraintCount = 1;
+            }
         }
         private bool ConsiderColors(OperationModel operationModel)
         {

@@ -71,6 +71,7 @@ namespace ThomassPuzzle
             LvlName.text = "Level " + PlayerModel.CurrentLevel.ToString();
             WholeLvl.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
             Space.CreateFlasks(GetCurrentLvl());
+            Space.CalculateGridConstraint();
         }
         public bool IsLvlDone(List<Flask> flasks)
         {
@@ -129,6 +130,8 @@ namespace ThomassPuzzle
                 selectedFlask.MoveDown();
                 Space.FailedTry(selectedFlask);
             }
+            
+            Space.CalculateGridConstraint();
         }
 
         #endregion
