@@ -84,8 +84,11 @@ namespace ThomassPuzzle.Services
                         flaks = generateLevel.Select(items => new LevelColumn
                         {
                             colors = items.ToList()
+
                         }).ToList(),
-                        lvl = i + 1
+                        lvl = i + 1,
+                        hide = i == lvlCount - 1,
+                        timeLimit = 30
                     });
                 }
 

@@ -1,0 +1,92 @@
+{
+  "levels": [
+    {
+      "lvl": 1,
+      "flaks": [
+        { "colors": [ 3, 3, 2, 2 ] },
+        { "colors": [ 3, 3, 2, 2 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 2,
+      "flaks": [
+        { "colors": [ 17, 19, 17, 17 ] },
+        { "colors": [ 17, 19, 19, 19 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 3,
+      "flaks": [
+        { "colors": [ 2, 18, 2, 18 ] },
+        { "colors": [ 2, 18, 2, 18 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 4,
+      "flaks": [
+        { "colors": [ 7, 7, 9, 9 ] },
+        { "colors": [ 7, 9, 7, 9 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 5,
+      "flaks": [
+        { "colors": [ 12, 16, 12, 16 ] },
+        { "colors": [ 16, 16, 12, 12 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 6,
+      "flaks": [
+        { "colors": [ 9, 9, 11, 9 ] },
+        { "colors": [ 11, 11, 9, 11 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 7,
+      "flaks": [
+        { "colors": [ 10, 10, 6, 6 ] },
+        { "colors": [ 10, 10, 6, 6 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": false
+    },
+    {
+      "lvl": 8,
+      "flaks": [
+        { "colors": [ 1, 1, 1, 17 ] },
+        { "colors": [ 17, 1, 17, 17 ] },
+        { "colors": [] },
+        { "colors": [] }
+      ],
+      "timeLimit": 30,
+      "hide": true
+    }
+  ]
+}

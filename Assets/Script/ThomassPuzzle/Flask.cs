@@ -141,6 +141,9 @@ namespace ThomassPuzzle
                 LiquidObjects[i].Fill(color, 1);
                 LiquidObjects[i].LastFlask = this;
             }
+
+            if (isActiveAndEnabled)
+                CheckFinishedFlask();
         }
         public int TopLiquidItemIndex()
         {

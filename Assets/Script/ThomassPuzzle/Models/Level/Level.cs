@@ -13,5 +13,9 @@ namespace ThomassPuzzle.Models.Level
         public int lvl;
 
         public List<LevelColumn> flaks;
+
+        public int timeLimit;
+
+        public bool hide;
     }
 }

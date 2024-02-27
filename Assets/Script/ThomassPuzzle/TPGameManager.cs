@@ -9,20 +9,28 @@ using ThomassPuzzle.Services;
 using ThomassPuzzle.Enums;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System;
+using System.Collections;
 namespace ThomassPuzzle
 {
     public class TPGameManager : Singleton<TPGameManager>
     {
         #region Fields
+
         [SerializeField] FlasksSpace Space;
         [SerializeField] Text LvlName;
         [SerializeField] int TestLevel;
         [SerializeField] Text LvlTitle;
         [SerializeField] Text WholeLvl;
         [SerializeField] RectTransform NextLevelPanel;
-
+        [SerializeField] RectTransform GameOverPanel;
+        [SerializeField] TextMeshProUGUI TimeLimit;
+        [SerializeField] RectTransform PauseLevelPanel;
         public TextAsset jsonData;
         private LevelGroup _levelData;
+        private bool _topPanelButtonsAreDisabled;
+        private int _seconds;
+        private bool _pausedGame { get; set; }
 
         #region FPS Properties
         [Space]
@@ -73,8 +81,24 @@ namespace ThomassPuzzle
 
             LvlName.text = "Level " + PlayerModel.CurrentLevel.ToString();
             WholeLvl.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
-            Space.CreateFlasks(GetCurrentLvl());
+
+            var currentLevel = GetCurrentLvl();
+            _pausedGame = false;
+            _seconds = currentLevel.timeLimit;
+            _topPanelButtonsAreDisabled = false;
+
+            Space.CreateFlasks(currentLevel);
             Space.CalculateGridConstraint();
+            GameOverPanel.gameObject.SetActive(false);
+            StartCoroutine(MinusTime());
+        }
+        public void DoneLevel()
+        {
+
+            NextLevelPanel.gameObject.SetActive(true);
+            _topPanelButtonsAreDisabled = true;
+            _pausedGame = true;
+            StopAllCoroutines();
         }
         public bool IsLvlDone(List<Flask> flasks)
         {
@@ -83,15 +107,163 @@ namespace ThomassPuzzle
             var isSameColors = filledLiquids.All(o => o.DistinctBy(o => o.GetImage().color).Count() == 1);
             return isSameColors;
         }
-        public void DoneLevel() => NextLevelPanel.gameObject.SetActive(true);
+        private static string ToFormattedTime(int seconds)
+        {
+            TimeSpan time = TimeSpan.FromSeconds(seconds);
+
+            string formattedTime = string.Format("{0:D2}:{1:D2}:{2:D2}",
+                                time.Hours,
+                                time.Minutes,
+                                time.Seconds);
+
+            // Remove hours and minutes if they are zero
+            formattedTime = formattedTime.TrimStart('0', ':');
+            if (formattedTime.StartsWith(":"))
+            {
+                formattedTime = formattedTime.Remove(0, 1);
+            }
+
+            return formattedTime;
+        }
+        private IEnumerator MinusTime()
+        {
+            while (_seconds >= 0)
+            {
+                if (_pausedGame)
+                    yield return new WaitUntil(() => !_pausedGame);
+
+                TimeLimit.text = ToFormattedTime(_seconds);
+
+                _seconds--;
+
+                yield return new WaitForSeconds(1f);
+            }
+
+            yield return new WaitUntil(() => !Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()));
+
+            if (IsLvlDone(Space.AllFlasks.Where(o => o.isActiveAndEnabled).ToList()))
+            {
+                DoneLevel();
+            }
+            else
+            {
+                TMGameService.RestartActions();
+                Space.AllFlasks.ForEach(f =>
+                {
+                    if (f.isActiveAndEnabled)
+                        f.gameObject.SetActive(false);
+                });
+
+                Space.LiquidLines.ForEach(l =>
+                {
+                    l.gameObject.SetActive(false);
+                });
+                GameOverPanel.gameObject.SetActive(true);
+                _topPanelButtonsAreDisabled = true;
+            }
+        }
         private Level GetCurrentLvl()
         {
             var playerCurrentLvl = PlayerModel.CurrentLevel;
-
-            return _levelData.FirstOrDefault(o => o.lvl == playerCurrentLvl);
+            var level = _levelData.FirstOrDefault(o => o.lvl == playerCurrentLvl);
+            return level;
         }
 
+
         #region Buttons
+        public void UndoActionButton()
+        {
+            if (_topPanelButtonsAreDisabled)
+                return;
+
+            if (NextLevelPanel.gameObject.activeSelf)
+                return;
+
+            //Logic of ad
+
+
+            //End 
+
+            TMGameService.UndoAction();
+        }
+        public void AddFlaskButton()
+        {
+            if (_topPanelButtonsAreDisabled)
+                return;
+
+            if (NextLevelPanel.gameObject.activeSelf)
+                return;
+
+            //If some of cup is in action
+            if (Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
+                return;
+
+            //Logic of ad
+
+
+            //End 
+
+
+            var flask = Space.CreateFlask();
+
+            flask.ClearFlask();
+
+            var selectedFlask = Space.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
+
+            if (selectedFlask != default)
+                Space.FailedTry(selectedFlask);
+
+            Space.CalculateGridConstraint();
+        }
+        public void PauseButton()
+        {
+            if (_topPanelButtonsAreDisabled)
+                return;
+
+            if (NextLevelPanel.gameObject.activeSelf)
+                return;
+
+            if (Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
+                return;
+
+            //Logic of ad
+
+
+            //End 
+
+            var selectedFlask = Space.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
+
+            if (selectedFlask != default)
+                Space.FailedTry(selectedFlask);
+
+            _topPanelButtonsAreDisabled = true;
+            _pausedGame = true;
+            PauseLevelPanel.gameObject.SetActive(true);
+
+
+            Space.AllFlasks.ForEach(o =>
+            {
+                if (o.isActiveAndEnabled)
+                    o.Button.enabled = false;
+            });
+
+        }
+        public void AddSecondsButton()
+        {
+            if (_topPanelButtonsAreDisabled)
+                return;
+
+            if (NextLevelPanel.gameObject.activeSelf)
+                return;
+
+            
+            //Logic of ad
+
+
+            //End 
+            
+            _seconds += 15;
+        }
         public void ResetSceneButton() =>
             SceneManager.LoadScene("ThomassPuzzle");
         public void NextLevelButton()
@@ -99,42 +271,28 @@ namespace ThomassPuzzle
             if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)
                 ++PlayerModel.CurrentLevel;
 
-            Space.SavedGamePlays.Clear();
+            TMGameService.ClearSavedActions();
+
             GenerateLvl();
         }
         public void RestartButton()
         {
-            if (!TMGameService.RestartActions() || NextLevelPanel.gameObject.activeSelf)
-                return;
+            TMGameService.RestartActions();
+
             GenerateLvl();
         }
-        public void UndoActionButton()
+        public void ContinueButton()
         {
-            if(NextLevelPanel.gameObject.activeSelf)
-                return;
-            TMGameService.UndoAction();
-        }
-        public void AddFlaskButton()
-        {
-            if (NextLevelPanel.gameObject.activeSelf)
-                return;
-            //If some of cup is in action
-            if (Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
-                return;
+            _topPanelButtonsAreDisabled = false;
+            _pausedGame = false;
+            PauseLevelPanel.gameObject.SetActive(false);
 
-            var flask = Space.CreateFlask();
-
-            flask.ClearFlask();
-    
-            var selectedFlask = Space.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
-
-            if (selectedFlask != default)
+            Space.AllFlasks.ForEach(o =>
             {
-                selectedFlask.MoveDown();
-                Space.FailedTry(selectedFlask);
-            }
-            
-            Space.CalculateGridConstraint();
+                if (o.isActiveAndEnabled)
+                    o.Button.enabled = true;
+            });
+
         }
 
         #endregion

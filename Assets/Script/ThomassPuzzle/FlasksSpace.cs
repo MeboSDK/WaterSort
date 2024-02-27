@@ -285,7 +285,6 @@ namespace ThomassPuzzle
             }).OnComplete(() =>
             {
                 EndOperation(SelectedFlasks.IndexOf(operationModel.SelectedFlask));
-
                 StartCoroutine(FinishLevel());
             });
         }
@@ -396,6 +395,8 @@ namespace ThomassPuzzle
         private float CalculateDelayForMoving(OperationModel operationModel)
         {
             int flasksCountInRow = CalculateFlasksCountInRow();
+            if(flasksCountInRow == 0)
+                return 0;
             var selectedFlaskIndex = AllFlasks.IndexOf(operationModel.SelectedFlask) + 1;
             var targetFlaskIndex = AllFlasks.IndexOf(operationModel.TargetFlask) + 1;
             //int flasksCountInRow = (int)(rectTransform.rect.width / 150);
