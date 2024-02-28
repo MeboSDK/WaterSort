@@ -10,6 +10,7 @@ namespace ThomassPuzzle
         #region Fields
         [SerializeField] Image Image;
         [SerializeField] bool Filled;
+        [SerializeField] GameObject QuestionImage;
         private WaterColorEnum colorEnum;
         public Flask LastFlask;
         public static float delay = 0;
@@ -76,7 +77,13 @@ namespace ThomassPuzzle
         {
             liquid.GetImage().fillAmount += 0.1f;
         }
-
+        public void HideLiquidObject(bool hide)
+        {
+            if(hide)
+                QuestionImage.SetActive(true);
+            else
+                QuestionImage.SetActive(false);
+        }
         #endregion 
     }
 }

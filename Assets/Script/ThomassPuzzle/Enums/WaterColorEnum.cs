@@ -27,7 +27,7 @@ namespace ThomassPuzzle.Enums
         BurntSienna,
         BittersweetShimmer,
         Oxley,
-        Brass
-
+        Brass,
+        Hide
     }
 }

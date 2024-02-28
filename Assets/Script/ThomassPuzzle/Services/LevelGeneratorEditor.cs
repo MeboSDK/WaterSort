@@ -88,7 +88,7 @@ namespace ThomassPuzzle.Services
                         }).ToList(),
                         lvl = i + 1,
                         hide = i == lvlCount - 1,
-                        timeLimit = 30
+                        timeLimit = 40
                     });
                 }
 

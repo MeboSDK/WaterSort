@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faab9bb4a9c93b14ab4477cb32043003, type: 3}
   m_Name: LevelGenerator
   m_EditorClassIdentifier: 
-  _targetGroupRange: {x: 2, y: 2}
+  _targetGroupRange: {x: 6, y: 7}
   _extraHolderRange: {x: 2, y: 2}
-  _targetLevelCount: 8
+  _targetLevelCount: 3

@@ -114,9 +114,11 @@ namespace ThomassPuzzle
 
         private bool MovedUp;
         private bool InAction;
+        private bool HidedLiquidObjects;
         #endregion
 
         #region  Methods
+
         public void HandleClick()
         {
             _parentSpace.SelectFlask(this);
@@ -202,10 +204,22 @@ namespace ThomassPuzzle
 
             FinishedFlask.gameObject.SetActive(isFinished);
         }
+        public void HideLiquidObjects()
+        {
+            for (int i = 2; i >= 0; i--)
+            {
+                LiquidObjects[i].HideLiquidObject(true);
+            }
+
+            HidedLiquidObjets(true);
+        }
         public bool IsMovedUp() => MovedUp;
         public void SetMovedUp(bool movedUp) => MovedUp = movedUp;
         public bool IsInAction() => InAction;
         public void SetInAction(bool inAction) => InAction = inAction;
+        public void HidedLiquidObjets(bool hided) => HidedLiquidObjects = hided;
+        public bool HidedLiquidObjets() => HidedLiquidObjects;
+        
         #endregion
 
     }
