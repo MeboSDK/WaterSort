@@ -186,11 +186,13 @@ namespace ThomassPuzzle
             var color = liquidObjs[0].GetColorEnum();
             if (liquidObjs.Any(o => o.GetColorEnum() != color) || color == WaterColorEnum.None)
             {
-                StartCoroutine(FlaskIsFinished(false));
+                if (isActiveAndEnabled)
+                    StartCoroutine(FlaskIsFinished(false));
                 return false;
             }
-
-            StartCoroutine(FlaskIsFinished(true));
+            if (isActiveAndEnabled)
+                StartCoroutine(FlaskIsFinished(true));
+            
             return true;
         }
         public IEnumerator FlaskIsFinished(bool isFinished)
