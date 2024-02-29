@@ -12,6 +12,7 @@ namespace ThomassPuzzle
         [SerializeField] Image Image;
         [SerializeField] bool Filled;
         [SerializeField] GameObject QuestionImage;
+        [SerializeField] RectTransform Rect;
         private WaterColorEnum colorEnum;
         public Flask LastFlask;
         public static float delay = 0;
@@ -32,7 +33,6 @@ namespace ThomassPuzzle
             }
         }
 
-       
         public void Clear()
         {
             Filled = false;
@@ -62,33 +62,38 @@ namespace ThomassPuzzle
             for (int i = 0; i < 10; i++)
             {
                 yield return new WaitForSeconds(.05f);
-                MinimizeHeigth(this);
+                MinimizeHeight(this);
             }
 
             Clear();
         }
-        public IEnumerator MaximazeLiquid()
+        public IEnumerator MaximizeLiquid()
         {
             for (int i = 0; i < 10; i++)
             {
                 yield return new WaitForSeconds(delay == 0 ? .05f : delay);
-                MaximazeHeigth(this);
+                MaximizeHeight(this);
             }
         }
-        private void MinimizeHeigth(LiquidObject liquid)
+        private void MinimizeHeight(LiquidObject liquid)
         {
             liquid.GetImage().fillAmount -= 0.1f;
         }
-        private void MaximazeHeigth(LiquidObject liquid)
+        private void MaximizeHeight(LiquidObject liquid)
         {
             liquid.GetImage().fillAmount += 0.1f;
         }
-        public void HideLiquidObject(bool hide)
+        public void ShowQuestions(bool show)
         {
-            if(hide)
+            if(show)
                 QuestionImage.SetActive(true);
             else
                 QuestionImage.SetActive(false);
+        }
+
+        public RectTransform GetRect()
+        {
+            return Rect;
         }
         #endregion 
     }

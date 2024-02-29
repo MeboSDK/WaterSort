@@ -25,7 +25,6 @@ namespace ThomassPuzzle
         [SerializeField] RectTransform GameOverPanel;
         [SerializeField] TextMeshProUGUI TimeLimit;
         [SerializeField] RectTransform PauseLevelPanel;
-
         public TextAsset jsonData;
         private LevelGroup _levelData;
         private bool _topPanelButtonsAreDisabled;
@@ -39,7 +38,6 @@ namespace ThomassPuzzle
         [SerializeField] int LevelsCount;
         [SerializeField] Vector2Int ColorsGroupsRange;
         [SerializeField] Vector2Int EmptyHoldersRange;
-        private LevelGeneratorEditor _levelGeneratorEditor;
         #endregion
         
         #region FPS Properties
@@ -60,8 +58,8 @@ namespace ThomassPuzzle
         {
             Application.targetFrameRate = (int)Limit;
 
-            //_levelData = JsonUtility.FromJson<LevelGroup>(jsonData.text);
-            _levelData = LevelGeneratorService.GenerateLevels(LevelsCount,ColorsGroupsRange,EmptyHoldersRange);
+            _levelData = JsonUtility.FromJson<LevelGroup>(jsonData.text);
+            //_levelData = LevelGeneratorService.GenerateLevels(LevelsCount,ColorsGroupsRange,EmptyHoldersRange);
 
             PlayerModel.SetPlayerCurrentLvl(1);
 
@@ -171,7 +169,9 @@ namespace ThomassPuzzle
         }
         private Level GetCurrentLvl()
         {
-            var playerCurrentLvl = PlayerModel.CurrentLevel;
+           // var playerCurrentLvl = PlayerModel.CurrentLevel;
+            var playerCurrentLvl = 3;
+
             var level = _levelData.FirstOrDefault(o => o.lvl == playerCurrentLvl);
             return level;
         }

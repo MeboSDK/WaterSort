@@ -97,6 +97,11 @@ namespace ThomassPuzzle
                 o.SetFixedPosition(default);
                 o.ClearFlask();
                 o.gameObject.SetActive(false);
+                Array.ForEach(o.GetLiquidObjects(),b => {
+                    Vector2 anchoredPosition = b.GetRect().anchoredPosition;
+                    anchoredPosition.x = 25;
+                    b.GetRect().anchoredPosition = anchoredPosition;
+                });
             });
 
             ColorsHelper colorsHelper = new ColorsHelper();
@@ -109,14 +114,11 @@ namespace ThomassPuzzle
 
                 if (!isFlaskEmpty)
                 {
-                     
                     if (lvl.hide)
-                        flaskObj.HideLiquidObjects();
+                        flaskObj.ShowQuestions(true,2);
                         
-                    flaskObj.SetChoosedColors(colorsHelper.ColorsForFlask(flask.colors));
+                    flaskObj.SetChosenColors(colorsHelper.ColorsForFlask(flask.colors));
                     flaskObj.FillFlask();
-
-                   
                 }
                 else
                     flaskObj.ClearFlask();
@@ -186,6 +188,7 @@ namespace ThomassPuzzle
             var liquidLine = SetLiquidLine();
             operationModel.SelectedFlask.SetInAction(true);
             operationModel.SelectedFlask.Button.enabled = false;
+            operationModel.SelectedFlask.ShowQuestions(false,2);
             AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelayForMoving(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,
@@ -230,7 +233,10 @@ namespace ThomassPuzzle
             //It's time for next liquid objects
             if (selectedTopIndex >= 0 && operationModel.TargetLiquidObjects.Any(o => o.GetImage().fillAmount == 0 && o.IsFilled()) &&
                  operationModel.SelectedLiquidObjects[selectedTopIndex].GetColorEnum() == operationModel.TargetLiquidObjects[operationModel.TargetFlask.TopLiquidItemIndex()].GetColorEnum())
+            {
+                operationModel.SelectedFlask.ShowLiquidObject(operationModel.SelectedLiquidObjects[selectedTopIndex]);
                 Rotation(operationModel, selectedTopIndex, liquidLine);
+            }
             else
             {
                 //There is no color for transferring in the flask,so flask needs to return back.
@@ -265,7 +271,7 @@ namespace ThomassPuzzle
             o.IsFilled() &&
             o.LastFlask == operationModel.SelectedFlask);
 
-            StartCoroutine(to.MaximazeLiquid());
+            StartCoroutine(to.MaximizeLiquid());
         }
         private LiquidLine SetLiquidLine()
         {
@@ -294,6 +300,18 @@ namespace ThomassPuzzle
                 operationModel.SelectedFlask.GetRatioBound().SetupRect(ref crtRadius, liquidObjects);
             }).OnComplete(() =>
             {
+                if(operationModel.SelectedTopIndex > -1)
+                {
+                    operationModel.SelectedFlask.ShowLiquidObject(operationModel.SelectedLiquidObjects[operationModel.SelectedTopIndex]);
+                    operationModel.SelectedFlask.ShowQuestions(true,operationModel.SelectedTopIndex - 1);
+                    Array.ForEach(operationModel.SelectedFlask.GetLiquidObjects(), b =>
+                    {
+                        Vector2 anchoredPosition = b.GetRect().anchoredPosition;
+                        anchoredPosition.x = 0;
+                        b.GetRect().anchoredPosition = anchoredPosition;
+                    });
+
+                }
                 operationModel.SelectedFlask.Button.enabled = true;
                 EndOperation(SelectedFlasks.IndexOf(operationModel.SelectedFlask));
                 if (gameObject.activeInHierarchy)
