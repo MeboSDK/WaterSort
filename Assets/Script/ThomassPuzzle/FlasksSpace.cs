@@ -288,6 +288,7 @@ namespace ThomassPuzzle
             }).OnComplete(() =>
             {
                 EndOperation(SelectedFlasks.IndexOf(operationModel.SelectedFlask));
+                if(gameObject.activeInHierarchy)
                 StartCoroutine(FinishLevel());
             });
         }

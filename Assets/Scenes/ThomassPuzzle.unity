@@ -1533,7 +1533,10 @@ MonoBehaviour:
   TimeLimit: {fileID: 1950789996}
   PauseLevelPanel: {fileID: 397901772}
   jsonData: {fileID: 4900000, guid: 20bb940d505b42748b1bde98c0e94cb0, type: 3}
-  limit: 60
+  LevelsCount: 3
+  ColorsGroupsRange: {x: 6, y: 6}
+  EmptyHoldersRange: {x: 2, y: 2}
+  Limit: 0
   FpsText: {fileID: 403015113}
 --- !u!224 &962255832
 RectTransform:
