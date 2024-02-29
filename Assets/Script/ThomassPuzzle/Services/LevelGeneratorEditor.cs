@@ -42,86 +42,13 @@ namespace ThomassPuzzle.Services
                 // Extra Holder Range Input (ELC)
                 var extraHolderRange = _extraHolderRangeProperty.vector2IntValue;
 
-                //If TLC or ELC is 0 or less exit method
-
-                if (lvlCount <= 0 || extraHolderRange.x <= 0)
-                    return;
-
-                // Creating levels list
-                var levels = new List<Level>();
-
-                for (var i = 0; i < lvlCount; i++)
-                {
-                    var expectGroup = Mathf.RoundToInt(
-                                            Mathf.Lerp(
-                                                  targetGroupRange.x,
-                                                  targetGroupRange.y,
-                                                  (float)i / lvlCount
-                                                       )
-                                            );
-
-                    var targetGroup = Mathf.RoundToInt(
-                                            Mathf.Clamp(
-                                                Random.Range(expectGroup - 1, expectGroup + 1),
-                                                targetGroupRange.x,
-                                                targetGroupRange.y
-                                                )
-                                            );
-
-                    var emptyFlask = Mathf.RoundToInt(
-                                            Mathf.Lerp(
-                                                  extraHolderRange.x,
-                                                  extraHolderRange.y,
-                                                  (float)i / lvlCount
-                                                       )
-                                            );
-
-
-                    var generateLevel = GenerateLevel(targetGroup, emptyFlask);
-
-                    levels.Add(new Level
-                    {
-                        flaks = generateLevel.Select(items => new LevelColumn
-                        {
-                            colors = items.ToList()
-
-                        }).ToList(),
-                        lvl = i + 1,
-                        hide = i == lvlCount - 1,
-                        timeLimit = 40
-                    });
-                }
-
+                LevelGroup levelGroup = LevelGeneratorService.GenerateLevels(lvlCount,targetGroupRange,extraHolderRange);
 
                 var path = EditorUtility.SaveFilePanel("Save File As Json", "", "levels.json", ".json");
 
                 if (path.Length > 0)
-                {
-                    System.IO.File.WriteAllText(path, JsonUtility.ToJson(new LevelGroup
-                    {
-                        levels = levels
-                    }));
-                }
+                    System.IO.File.WriteAllText(path, JsonUtility.ToJson(levelGroup));
             }
-        }
-
-        public static IEnumerable<int[]> GenerateLevel(int holderCount, int emptyFlasks)
-        {
-            // Creating empty holders.
-            var holders = Enumerable.Range(0, holderCount).Select(i => new List<int>()).ToList();
-
-            ColorsHelper colorsHelper = new ColorsHelper();
-            List<WaterColorEnum> choosedColors = colorsHelper.ColorsDevelopment(false, holders.Count);
-
-            // Set groups and attach values
-            for (var i = 0; i < holders.Count; i++)
-                holders[i].AddRange(colorsHelper.GetColorsIndexes(choosedColors));
-
-
-            for (int j = 0; j < emptyFlasks; j++)
-                holders.Add(new());
-
-            return holders.Select(items => items.ToArray());
         }
     }
 #endif
