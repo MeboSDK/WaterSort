@@ -114,11 +114,11 @@ namespace ThomassPuzzle
 
         private bool MovedUp;
         private bool InAction;
-        private bool HidedLiquidObjects;
+        private bool HidedLiquidObjects = false;
         #endregion
 
         #region  Methods
-
+        
         public void HandleClick()
         {
             _parentSpace.SelectFlask(this);
@@ -137,12 +137,24 @@ namespace ThomassPuzzle
         }
         public void FillFlask()
         {
-            for (int i = 0; i < LiquidObjects.Length; i++)
-            {
-                var color = ColorsHelper.GetColor(_choosedColors[i]);
-                LiquidObjects[i].Fill(color, 1);
-                LiquidObjects[i].LastFlask = this;
+
+                for (int i = 0; i < LiquidObjects.Length; i++)
+                {
+                    var color = ColorsHelper.GetColor(_choosedColors[i]);
+                    LiquidObjects[i].Fill(color, 1);
+                    LiquidObjects[i].LastFlask = this;
+                }
+       
+            if(HidedLiquidObjects)
+            {   
+                var color = ColorsHelper.GetColor(WaterColorEnum.Hide);
+                for (int i = 2; i >= 0; i--)
+                {
+                    LiquidObjects[i].Fill(color,1,true);
+                    LiquidObjects[i].LastFlask = this;
+                }
             }
+            
 
             if (isActiveAndEnabled)
                 CheckFinishedFlask();

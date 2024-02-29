@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ThomassPuzzle.Enums;
 using ThomassPuzzle.Models;
+using TMPro;
 namespace ThomassPuzzle
 {
     public class LiquidObject : MonoBehaviour
@@ -17,16 +18,21 @@ namespace ThomassPuzzle
         #endregion
 
         #region Methods
-        public void Fill(ColorModel colorModel, int fillAmount)
+        public void Fill(ColorModel colorModel, int fillAmount,bool hided = false)
         {
             Image.color = colorModel.Color;
-            name = colorModel.Name;
             gameObject.SetActive(true);
             Image.fillAmount = fillAmount;
             Filled = true;
 
-            SetColorEnum(colorModel.ColorEnum);
+            if(!hided)
+            {
+                name = colorModel.Name;
+                SetColorEnum(colorModel.ColorEnum);
+            }
         }
+
+       
         public void Clear()
         {
             Filled = false;
