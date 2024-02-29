@@ -9,6 +9,7 @@ using ThomassPuzzle.Helpers.Base;
 using UnityEngine;
 using ThomassPuzzle.Extensions;
 using ThomassPuzzle.Models;
+using TMPro;
 namespace ThomassPuzzle.Helpers
 {
     public class ColorsHelper
@@ -67,6 +68,7 @@ namespace ThomassPuzzle.Helpers
 
             return flask;
         }
+
 
         #endregion
 

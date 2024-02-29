@@ -108,11 +108,14 @@ namespace ThomassPuzzle
 
                 if (!isFlaskEmpty)
                 {
+                     
+                    if (lvl.hide)
+                        flaskObj.HideLiquidObjects();
+                        
                     flaskObj.SetChoosedColors(colorsHelper.ColorsForFlask(flask.colors));
                     flaskObj.FillFlask();
 
-                    if (lvl.hide)
-                        flaskObj.HideLiquidObjects();
+                   
                 }
                 else
                     flaskObj.ClearFlask();
