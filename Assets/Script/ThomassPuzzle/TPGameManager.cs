@@ -30,6 +30,7 @@ namespace ThomassPuzzle
         private LevelGroup _levelData;
         private bool _topPanelButtonsAreDisabled;
         private int _seconds;
+        
         private bool _pausedGame { get; set; }
 
         #region Level Generator
@@ -85,6 +86,7 @@ namespace ThomassPuzzle
                 frameCount = 0;
             }
         }
+        
         public void GenerateLvl()
         {
             //Turn off next level pop up
@@ -102,6 +104,8 @@ namespace ThomassPuzzle
             _pausedGame = false;
             _seconds = currentLevel.timeLimit;
             _topPanelButtonsAreDisabled = false;
+
+            Space.DisabledTouch = false;
 
             Space.CreateFlasks(currentLevel);
             
@@ -157,8 +161,8 @@ namespace ThomassPuzzle
 
                 yield return new WaitForSeconds(1f);
             }
-
-            //yield return new WaitUntil(() => !Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()));
+            Space.DisabledTouch = true;
+            yield return new WaitUntil(() => !Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()));
 
             if (IsLvlDone(Space.AllFlasks.Where(o => o.isActiveAndEnabled).ToList()))
                 DoneLevel();
@@ -182,7 +186,7 @@ namespace ThomassPuzzle
                     f.gameObject.SetActive(false);
             });
             Space.LiquidLines.ForEach(l => l.gameObject.SetActive(false));
-            Space.gameObject.SetActive(false);
+            //Space.gameObject.SetActive(false);
 
             GameOverPanel.gameObject.SetActive(true);
             _topPanelButtonsAreDisabled = true;
@@ -220,7 +224,6 @@ namespace ThomassPuzzle
 
 
             //End 
-
 
             var flask = Space.CreateFlask();
 
@@ -282,8 +285,7 @@ namespace ThomassPuzzle
             
             _seconds += 15;
         }
-        public void ResetSceneButton() =>
-            SceneManager.LoadScene("ThomassPuzzle");
+        public void ResetSceneButton() => SceneManager.LoadScene("ThomassPuzzle");
         public void NextLevelButton()
         {
             if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)

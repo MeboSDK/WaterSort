@@ -104,7 +104,7 @@ namespace ThomassPuzzle
 
         [SerializeField] GameObject FinishedFlask;
 
-        [DoNotSerialize] public Button Button;
+        [SerializeField] public Button Button;
 
         private Vector2 FixedPosition;
 
@@ -155,8 +155,11 @@ namespace ThomassPuzzle
 
             return -1;
         }
-        public void MoveUp() =>
+        public void MoveUp()
+        {
+            SetMovedUp(true);
             transform.DOMoveY(transform.position.y + .5f, 0.1f);
+        }
         public void MoveDown(float delay = 0.1f)
         {
             Button.enabled = false;
@@ -169,7 +172,7 @@ namespace ThomassPuzzle
         public void ReturnBack(float delay = 0.1f) =>
             RectTransform.DOAnchorPos(FixedPosition, delay).OnComplete(() =>
             {
-                Button.enabled = true;
+                //Button.enabled = true;
                 SetMovedUp(false);
                 SetInAction(false);
             });
@@ -194,7 +197,7 @@ namespace ThomassPuzzle
             }
             if (isActiveAndEnabled)
                 StartCoroutine(FlaskIsFinished(true));
-            
+
             return true;
         }
         public IEnumerator FlaskIsFinished(bool isFinished)
@@ -219,7 +222,7 @@ namespace ThomassPuzzle
         public void SetInAction(bool inAction) => InAction = inAction;
         public void HidedLiquidObjets(bool hided) => HidedLiquidObjects = hided;
         public bool HidedLiquidObjets() => HidedLiquidObjects;
-        
+
         #endregion
 
     }
