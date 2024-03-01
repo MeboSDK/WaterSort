@@ -11,6 +11,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System;
 using System.Collections;
+
 namespace ThomassPuzzle
 {
     public class TPGameManager : Singleton<TPGameManager>
@@ -18,12 +19,14 @@ namespace ThomassPuzzle
         #region Fields
 
         [SerializeField] FlasksSpace Space;
-        [SerializeField] Text LvlName;
-        [SerializeField] Text LvlTitle;
-        [SerializeField] Text WholeLvl;
+        [SerializeField] TextMeshProUGUI LvlName;
+        [SerializeField] TextMeshProUGUI LvlTitle;
+        [SerializeField] TextMeshProUGUI TimeLimit;
+
+        // [SerializeField] TextMeshProUGUI WholeLvl;
         [SerializeField] RectTransform NextLevelPanel;
         [SerializeField] RectTransform GameOverPanel;
-        [SerializeField] TextMeshProUGUI TimeLimit;
+        [SerializeField] RectTransform TopPanel;
         [SerializeField] RectTransform PauseLevelPanel;
         public TextAsset jsonData;
         private LevelGroup _levelData;
@@ -40,15 +43,15 @@ namespace ThomassPuzzle
         [SerializeField] Vector2Int EmptyHoldersRange;
         #endregion
         
-        #region FPS Properties
-        [Space]
-        [Header("FPS")]
-        [SerializeField] LimitsEnum Limit;
-        [SerializeField] TextMeshProUGUI FpsText;
-        private float pollingTime = 1f;
-        private float time;
-        private int frameCount;
-        #endregion
+        // #region FPS Properties
+        // [Space]
+        // [Header("FPS")]
+        // [SerializeField] LimitsEnum Limit;
+        // [SerializeField] TextMeshProUGUI FpsText;
+        // private float pollingTime = 1f;
+        // private float time;
+        // private int frameCount;
+        // #endregion
 
         #endregion
 
@@ -56,7 +59,7 @@ namespace ThomassPuzzle
         #region Methods
         void Start()
         {
-            Application.targetFrameRate = (int)Limit;
+            // Application.targetFrameRate = (int)Limit;
 
             _levelData = JsonUtility.FromJson<LevelGroup>(jsonData.text);
             //_levelData = LevelGeneratorService.GenerateLevels(LevelsCount,ColorsGroupsRange,EmptyHoldersRange);
@@ -67,22 +70,22 @@ namespace ThomassPuzzle
         }
         void Update()
         {
-            // Update time.
-            time += Time.deltaTime;
+            // // Update time.
+            // time += Time.deltaTime;
 
-            // Count this frame.
-            frameCount++;
+            // // Count this frame.
+            // frameCount++;
 
-            if (time >= pollingTime)
-            {
-                // Update frame rate.
-                int frameRate = Mathf.RoundToInt((float)frameCount / time);
-                FpsText.text = frameRate.ToString() + " fps";
+            // if (time >= pollingTime)
+            // {
+            //     // Update frame rate.
+            //     int frameRate = Mathf.RoundToInt((float)frameCount / time);
+            //     // FpsText.text = frameRate.ToString() + " fps";
 
-                // Reset time and frame count.
-                time -= pollingTime;
-                frameCount = 0;
-            }
+            //     // Reset time and frame count.
+            //     time -= pollingTime;
+            //     frameCount = 0;
+            // }
         }
         
         public void GenerateLvl()
@@ -94,7 +97,7 @@ namespace ThomassPuzzle
 
             //Write information about level
             LvlName.text = "Level " + PlayerModel.CurrentLevel.ToString();
-            WholeLvl.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
+            // WholeLvl.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
 
             var currentLevel = GetCurrentLvl();
         
@@ -117,6 +120,7 @@ namespace ThomassPuzzle
         {
 
             NextLevelPanel.gameObject.SetActive(true);
+            TopPanel.gameObject.SetActive(false);
             _topPanelButtonsAreDisabled = true;
             _pausedGame = true;
             StopAllCoroutines();
@@ -189,6 +193,7 @@ namespace ThomassPuzzle
             //Space.gameObject.SetActive(false);
 
             GameOverPanel.gameObject.SetActive(true);
+            TopPanel.gameObject.SetActive(false);
             _topPanelButtonsAreDisabled = true;
         }
 
@@ -259,7 +264,6 @@ namespace ThomassPuzzle
 
             _topPanelButtonsAreDisabled = true;
             _pausedGame = true;
-            PauseLevelPanel.gameObject.SetActive(true);
 
 
             Space.AllFlasks.ForEach(o =>
@@ -288,6 +292,7 @@ namespace ThomassPuzzle
         public void ResetSceneButton() => SceneManager.LoadScene("ThomassPuzzle");
         public void NextLevelButton()
         {
+            TopPanel.gameObject.SetActive(true);
             if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)
                 ++PlayerModel.CurrentLevel;
 
