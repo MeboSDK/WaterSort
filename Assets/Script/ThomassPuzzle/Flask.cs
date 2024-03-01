@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ThomassPuzzle.Enums;
 using ThomassPuzzle.Helpers;
+using System;
 namespace ThomassPuzzle
 {
     [System.Serializable]
@@ -114,7 +115,6 @@ namespace ThomassPuzzle
 
         private bool _movedUp;
         private bool _inAction;
-        private bool _hidedLiquidObjects = false;
         #endregion
 
         #region  Methods
@@ -145,14 +145,8 @@ namespace ThomassPuzzle
                 LiquidObjects[i].LastFlask = this;
             }
 
-            if (_hidedLiquidObjects)
-            {
-                var color = ColorsHelper.GetColor(WaterColorEnum.Hide);
-                for (int i = 2; i >= 0; i--)
-                {
-                    LiquidObjects[i].Fill(color, 1, true);
-                }
-            }
+        
+           
 
 
             if (isActiveAndEnabled)
@@ -217,29 +211,55 @@ namespace ThomassPuzzle
 
             FinishedFlask.gameObject.SetActive(isFinished);
         }
-        public void ShowQuestions(bool show,int topIndex)
+
+        public void HideLiquidObjects(bool hide, int topIndex)
         {
             for (int i = topIndex; i >= 0; i--)
-                LiquidObjects[i].ShowQuestions(show);
-
-            bool hide = show;
-            HidedLiquidObjects(hide);
+            {
+                LiquidObjects[i].ShowLiquidObject(!hide);
+            }
         }
-
-        public void ShowLiquidObject(LiquidObject liquidObject)
+   
+        public void ShowLiquidObjectsWithSameColors()
         {
-            var color = ColorsHelper.GetColor(liquidObject.GetColorEnum());
+            var selectedTopIndex = TopLiquidItemIndex();
+            if (TopLiquidItemIndex() > -1)
+            {
+                WaterColorEnum selectedColor = WaterColorEnum.None;
+                for (int i = selectedTopIndex; i >= 0; i--)
+                {
+                    var liquidObject = LiquidObjects[i];
+                    if (selectedColor == WaterColorEnum.None)
+                        selectedColor = liquidObject.GetColorEnum();
 
-            liquidObject.Fill(color, 1, false);
-            liquidObject.ShowQuestions(false);
+                    if (selectedColor == liquidObject.GetColorEnum())
+                    {
+                        liquidObject.ShowLiquidObject(true);
+                    }
+                    else
+                    {
+                        HideLiquidObjects(true, i);
+                        break;
+                    }
+                }
+
+            }
+            ZeroingLiquidObjectsPositions();
         }
 
         public bool IsMovedUp() => _movedUp;
         public void SetMovedUp(bool movedUp) => _movedUp = movedUp;
         public bool IsInAction() => _inAction;
         public void SetInAction(bool inAction) => _inAction = inAction;
-        public void HidedLiquidObjects(bool hided) => _hidedLiquidObjects = hided;
-
+        public void ZeroingLiquidObjectsPositions()
+        {
+            Array.ForEach(LiquidObjects, b =>
+            {
+                Vector2 anchoredPosition = b.GetRect().anchoredPosition;
+                anchoredPosition.x = 0;
+                b.GetRect().anchoredPosition = anchoredPosition;
+            });
+        }
         #endregion
 
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace ThomassPuzzle.Services
 
                 var targetGroup = Mathf.RoundToInt(
                                         Mathf.Clamp(
-                                            Random.Range(expectGroup - 1, expectGroup + 1),
+                                            UnityEngine.Random.Range(expectGroup - 1, expectGroup + 1),
                                             colorsGroupsRange.x,
                                             colorsGroupsRange.y
                                             )
@@ -72,17 +73,36 @@ namespace ThomassPuzzle.Services
             var holders = Enumerable.Range(0, holderCount).Select(i => new List<int>()).ToList();
 
             ColorsHelper colorsHelper = new ColorsHelper();
-            List<WaterColorEnum> choosedColors = colorsHelper.ColorsDevelopment(false, holders.Count);
+            List<WaterColorEnum> chosenColors = colorsHelper.ColorsDevelopment(false, holders.Count);
 
             // Set groups and attach values
             for (var i = 0; i < holders.Count; i++)
-                holders[i].AddRange(colorsHelper.GetColorsIndexes(choosedColors));
+            {
+                List<int> colors;
+
+                do colors = colorsHelper.GetColorsIndexes(chosenColors).ToList();
+                while (!AreAllElementsDifferent(colors));
+
+                holders[i].AddRange(colors);
+            }
 
 
             for (int j = 0; j < emptyFlasks; j++)
                 holders.Add(new());
 
             return holders.Select(items => items.ToArray());
+        }
+
+        static bool AreAllElementsDifferent<T>(IEnumerable<T> items)
+        {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
+            // Get the first element
+            T firstElement = items.FirstOrDefault();
+
+            // Check if all elements are different from the first one
+            return items.Skip(1).Any(item => !EqualityComparer<T>.Default.Equals(item, firstElement));
         }
     }
 }

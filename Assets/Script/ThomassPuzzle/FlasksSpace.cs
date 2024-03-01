@@ -97,11 +97,7 @@ namespace ThomassPuzzle
                 o.SetFixedPosition(default);
                 o.ClearFlask();
                 o.gameObject.SetActive(false);
-                Array.ForEach(o.GetLiquidObjects(),b => {
-                    Vector2 anchoredPosition = b.GetRect().anchoredPosition;
-                    anchoredPosition.x = 25;
-                    b.GetRect().anchoredPosition = anchoredPosition;
-                });
+                o.ZeroingLiquidObjectsPositions();
             });
 
             ColorsHelper colorsHelper = new ColorsHelper();
@@ -114,11 +110,11 @@ namespace ThomassPuzzle
 
                 if (!isFlaskEmpty)
                 {
-                    if (lvl.hide)
-                        flaskObj.ShowQuestions(true,2);
-                        
                     flaskObj.SetChosenColors(colorsHelper.ColorsForFlask(flask.colors));
                     flaskObj.FillFlask();
+
+                    if (lvl.hide)
+                        flaskObj.HideLiquidObjects(true, 2);
                 }
                 else
                     flaskObj.ClearFlask();
@@ -144,9 +140,7 @@ namespace ThomassPuzzle
             else if (existsIndex == -1 && !SelectedNTarget.ContainsValue(flask))
             {
                 if (!flask.CheckFinishedFlask())
-                {
                     SaveSelectedFlask(flask);
-                }
                 return;
             }
             else
@@ -188,7 +182,7 @@ namespace ThomassPuzzle
             var liquidLine = SetLiquidLine();
             operationModel.SelectedFlask.SetInAction(true);
             operationModel.SelectedFlask.Button.enabled = false;
-            operationModel.SelectedFlask.ShowQuestions(false,2);
+            operationModel.SelectedFlask.HideLiquidObjects(false,2);
             AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelayForMoving(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,
@@ -230,11 +224,11 @@ namespace ThomassPuzzle
             //Wait liquid objects are transferring
             yield return new WaitForSeconds(.55f);
 
-            //It's time for next liquid objects
+            //It's time for next liquid object
             if (selectedTopIndex >= 0 && operationModel.TargetLiquidObjects.Any(o => o.GetImage().fillAmount == 0 && o.IsFilled()) &&
                  operationModel.SelectedLiquidObjects[selectedTopIndex].GetColorEnum() == operationModel.TargetLiquidObjects[operationModel.TargetFlask.TopLiquidItemIndex()].GetColorEnum())
             {
-                operationModel.SelectedFlask.ShowLiquidObject(operationModel.SelectedLiquidObjects[selectedTopIndex]);
+                operationModel.SelectedLiquidObjects[selectedTopIndex].ShowLiquidObject(true);
                 Rotation(operationModel, selectedTopIndex, liquidLine);
             }
             else
@@ -300,18 +294,7 @@ namespace ThomassPuzzle
                 operationModel.SelectedFlask.GetRatioBound().SetupRect(ref crtRadius, liquidObjects);
             }).OnComplete(() =>
             {
-                if(operationModel.SelectedTopIndex > -1)
-                {
-                    operationModel.SelectedFlask.ShowLiquidObject(operationModel.SelectedLiquidObjects[operationModel.SelectedTopIndex]);
-                    operationModel.SelectedFlask.ShowQuestions(true,operationModel.SelectedTopIndex - 1);
-                    Array.ForEach(operationModel.SelectedFlask.GetLiquidObjects(), b =>
-                    {
-                        Vector2 anchoredPosition = b.GetRect().anchoredPosition;
-                        anchoredPosition.x = 0;
-                        b.GetRect().anchoredPosition = anchoredPosition;
-                    });
-
-                }
+                operationModel.SelectedFlask.ShowLiquidObjectsWithSameColors();
                 operationModel.SelectedFlask.Button.enabled = true;
                 EndOperation(SelectedFlasks.IndexOf(operationModel.SelectedFlask));
                 if (gameObject.activeInHierarchy)

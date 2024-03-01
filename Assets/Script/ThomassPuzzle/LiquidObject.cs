@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using ThomassPuzzle.Enums;
 using ThomassPuzzle.Models;
 using TMPro;
+using ThomassPuzzle.Helpers;
 namespace ThomassPuzzle
 {
     public class LiquidObject : MonoBehaviour
@@ -19,14 +20,14 @@ namespace ThomassPuzzle
         #endregion
 
         #region Methods
-        public void Fill(ColorModel colorModel, int fillAmount,bool hided = false)
+        public void Fill(ColorModel colorModel, int fillAmount, bool hided = false)
         {
             Image.color = colorModel.Color;
             gameObject.SetActive(true);
             Image.fillAmount = fillAmount;
             Filled = true;
 
-            if(!hided)
+            if (!hided)
             {
                 name = colorModel.Name;
                 SetColorEnum(colorModel.ColorEnum);
@@ -85,10 +86,28 @@ namespace ThomassPuzzle
         }
         public void ShowQuestions(bool show)
         {
-            if(show)
+            if (show)
                 QuestionImage.SetActive(true);
             else
                 QuestionImage.SetActive(false);
+        }
+
+        public void ShowLiquidObject(bool show)
+        {
+            if (show)
+            {
+                var color = ColorsHelper.GetColor(GetColorEnum());
+
+                Fill(color, 1, false);
+                ShowQuestions(false);
+
+            }
+            else
+            {
+                var color = ColorsHelper.GetColor(WaterColorEnum.Hide);
+                Fill(color, 1, true);
+                ShowQuestions(true);
+            }
         }
 
         public RectTransform GetRect()

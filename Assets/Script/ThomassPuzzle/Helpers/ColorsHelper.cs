@@ -22,7 +22,7 @@ namespace ThomassPuzzle.Helpers
         #endregion
 
         #region Public Methods
-   
+
         /// <summary>
         /// Creates colors for flasks. for example if flasks count is 5 method returns (5 * 4)
         /// </summary>
@@ -46,25 +46,24 @@ namespace ThomassPuzzle.Helpers
             return colors;
         }
 
-        public IEnumerable<int> GetColorsIndexes(List<WaterColorEnum> choosedColors)
+        public IEnumerable<int> GetColorsIndexes(List<WaterColorEnum> chosenColors)
         {
             for (int i = 0; i < 4; i++)
             {
-                var randomizedColor = choosedColors.GetRandom();
-                choosedColors.Remove(randomizedColor);
+                var randomizedColor = chosenColors.GetRandom();
+                chosenColors.Remove(randomizedColor);
                 yield return (int)randomizedColor;
             }
         }
-
-        public static ColorModel GetColor(WaterColorEnum choosedColor)
+        public static ColorModel GetColor(WaterColorEnum chosenColor)
         {
             ColorModel flask = new ColorModel();
 
-            flask.Name = Enum.GetName(typeof(WaterColorEnum), choosedColor);
+            flask.Name = Enum.GetName(typeof(WaterColorEnum), chosenColor);
 
-            flask.Color = GetChoosedColor(choosedColor);
+            flask.Color = GetChosenColor(chosenColor);
 
-            flask.ColorEnum = choosedColor;
+            flask.ColorEnum = chosenColor;
 
             return flask;
         }
@@ -73,7 +72,7 @@ namespace ThomassPuzzle.Helpers
         #endregion
 
         #region Private Methods
-        private static Color GetChoosedColor(WaterColorEnum color)
+        private static Color GetChosenColor(WaterColorEnum color)
         {
             switch (color)
             {
@@ -132,15 +131,17 @@ namespace ThomassPuzzle.Helpers
             do
             {
                 color = RandomColor();
+                
+                while (color == WaterColorEnum.Hide)
+                    color = RandomColor();
 
-                if (!NotDuplicatedColors.Contains(color) && color != WaterColorEnum.Hide)
+                if (!NotDuplicatedColors.Contains(color))
                     return color;
             }
             while (NotDuplicatedColors.Any(o => o == color));
 
             return WaterColorEnum.None;
         }
-        private WaterColorEnum RandomColor() => RandomationEnum.GetRandomEnum<WaterColorEnum>();
         private List<WaterColorEnum> GetRandomColors(int flasksCount)
         {
             DuplicatedColors = new List<WaterColorEnum>();
@@ -156,6 +157,7 @@ namespace ThomassPuzzle.Helpers
             }
             return DuplicatedColors;
         }
+        private WaterColorEnum RandomColor() => RandomationEnum.GetRandomEnum<WaterColorEnum>();
 
         #endregion
     }
