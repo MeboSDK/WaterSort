@@ -1531,6 +1531,9 @@ MonoBehaviour:
   GameOverPanel: {fileID: 1817179134}
   TimeLimit: {fileID: 1950789996}
   PauseLevelPanel: {fileID: 397901772}
+  AddableMaxFlasks: 1
+  AddTimeSeconds: 15
+  AddTimeCount: 1
   jsonData: {fileID: 4900000, guid: 20bb940d505b42748b1bde98c0e94cb0, type: 3}
   LevelsCount: 3
   ColorsGroupsRange: {x: 5, y: 6}
@@ -3173,6 +3176,7 @@ MonoBehaviour:
   GameManager: {fileID: 962255831}
   SelectedFlasks: []
   DisabledTouch: 0
+  IsHiddenLiquidObjects: 0
 --- !u!114 &1868946089
 MonoBehaviour:
   m_ObjectHideFlags: 0

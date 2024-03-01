@@ -47,6 +47,8 @@ namespace ThomassPuzzle
         [DoNotSerialize] public Stack<SaveGamePlay> SavedGamePlays = new Stack<SaveGamePlay>();
 
         [DoNotSerialize] public bool DisabledTouch;
+
+        [DoNotSerialize] public bool IsHiddenLiquidObjects;
         #endregion
 
         #region Methods
@@ -114,7 +116,12 @@ namespace ThomassPuzzle
                     flaskObj.FillFlask();
 
                     if (lvl.hide)
+                    {
+                        IsHiddenLiquidObjects = true;
                         flaskObj.HideLiquidObjects(true, 2);
+                    }
+                    else
+                        IsHiddenLiquidObjects = false;
                 }
                 else
                     flaskObj.ClearFlask();
@@ -124,7 +131,7 @@ namespace ThomassPuzzle
         {
             if (DisabledTouch)
                 return;
-            
+
             int existsIndex = SelectedFlasks.IndexOf(flask);
             if (SelectedFlasks.Count > 0 && SelectedNTarget.ContainsValue(null))
             {
@@ -182,7 +189,11 @@ namespace ThomassPuzzle
             var liquidLine = SetLiquidLine();
             operationModel.SelectedFlask.SetInAction(true);
             operationModel.SelectedFlask.Button.enabled = false;
-            operationModel.SelectedFlask.HideLiquidObjects(false,2);
+
+            if (IsHiddenLiquidObjects)
+                foreach (var lqObject in operationModel.SelectedFlask.GetLiquidObjects().SkipLast(1))
+                    lqObject.ShowQuestions(false);
+
             AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelayForMoving(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,

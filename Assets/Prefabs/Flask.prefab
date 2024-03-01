@@ -231,7 +231,7 @@ MonoBehaviour:
   Image: {fileID: 9014048732124857656}
   Filled: 0
   QuestionImage: {fileID: 8017556963135987313}
-  Rect: {fileID: 8666542320147836335}
+  Rect: {fileID: 4437732191901724605}
   LastFlask: {fileID: 0}
 --- !u!114 &9014048732124857656
 MonoBehaviour:

@@ -145,10 +145,6 @@ namespace ThomassPuzzle
                 LiquidObjects[i].LastFlask = this;
             }
 
-        
-           
-
-
             if (isActiveAndEnabled)
                 CheckFinishedFlask();
         }
@@ -222,6 +218,9 @@ namespace ThomassPuzzle
    
         public void ShowLiquidObjectsWithSameColors()
         {
+            if (!_parentSpace.IsHiddenLiquidObjects)
+                return;
+
             var selectedTopIndex = TopLiquidItemIndex();
             if (TopLiquidItemIndex() > -1)
             {
