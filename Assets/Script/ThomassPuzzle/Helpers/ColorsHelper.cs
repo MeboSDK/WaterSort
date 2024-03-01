@@ -133,7 +133,7 @@ namespace ThomassPuzzle.Helpers
             {
                 color = RandomColor();
 
-                if (!NotDuplicatedColors.Contains(color))
+                if (!NotDuplicatedColors.Contains(color) && color != WaterColorEnum.Hide)
                     return color;
             }
             while (NotDuplicatedColors.Any(o => o == color));

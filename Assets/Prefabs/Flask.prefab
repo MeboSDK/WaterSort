@@ -62,6 +62,7 @@ MonoBehaviour:
   Image: {fileID: 1133304025605378075}
   Filled: 0
   QuestionImage: {fileID: 6903759366282010045}
+  Rect: {fileID: 202461452581545526}
   LastFlask: {fileID: 0}
 --- !u!114 &1133304025605378075
 MonoBehaviour:
@@ -230,6 +231,7 @@ MonoBehaviour:
   Image: {fileID: 9014048732124857656}
   Filled: 0
   QuestionImage: {fileID: 8017556963135987313}
+  Rect: {fileID: 8666542320147836335}
   LastFlask: {fileID: 0}
 --- !u!114 &9014048732124857656
 MonoBehaviour:
@@ -505,6 +507,7 @@ MonoBehaviour:
   Image: {fileID: 154923192521985025}
   Filled: 0
   QuestionImage: {fileID: 6087627397370799290}
+  Rect: {fileID: 8666542320147836335}
   LastFlask: {fileID: 0}
 --- !u!114 &154923192521985025
 MonoBehaviour:
@@ -810,7 +813,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 58.68, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 29.41, y: 26.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7120775989248471516
@@ -960,7 +963,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.99, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 29.41, y: 26.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5062423973624779912
@@ -1062,6 +1065,7 @@ MonoBehaviour:
   Image: {fileID: 2176779530849229448}
   Filled: 0
   QuestionImage: {fileID: 0}
+  Rect: {fileID: 3042426623557070256}
   LastFlask: {fileID: 0}
 --- !u!114 &2176779530849229448
 MonoBehaviour:

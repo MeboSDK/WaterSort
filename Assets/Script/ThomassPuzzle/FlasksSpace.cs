@@ -46,6 +46,7 @@ namespace ThomassPuzzle
 
         [DoNotSerialize] public Stack<SaveGamePlay> SavedGamePlays = new Stack<SaveGamePlay>();
 
+        [DoNotSerialize] public bool DisabledTouch;
         #endregion
 
         #region Methods
@@ -96,6 +97,11 @@ namespace ThomassPuzzle
                 o.SetFixedPosition(default);
                 o.ClearFlask();
                 o.gameObject.SetActive(false);
+                Array.ForEach(o.GetLiquidObjects(),b => {
+                    Vector2 anchoredPosition = b.GetRect().anchoredPosition;
+                    anchoredPosition.x = 25;
+                    b.GetRect().anchoredPosition = anchoredPosition;
+                });
             });
 
             ColorsHelper colorsHelper = new ColorsHelper();
@@ -108,14 +114,11 @@ namespace ThomassPuzzle
 
                 if (!isFlaskEmpty)
                 {
-                     
                     if (lvl.hide)
-                        flaskObj.HideLiquidObjects();
+                        flaskObj.ShowQuestions(true,2);
                         
-                    flaskObj.SetChoosedColors(colorsHelper.ColorsForFlask(flask.colors));
+                    flaskObj.SetChosenColors(colorsHelper.ColorsForFlask(flask.colors));
                     flaskObj.FillFlask();
-
-                   
                 }
                 else
                     flaskObj.ClearFlask();
@@ -123,6 +126,9 @@ namespace ThomassPuzzle
         }
         public void SelectFlask(Flask flask)
         {
+            if (DisabledTouch)
+                return;
+            
             int existsIndex = SelectedFlasks.IndexOf(flask);
             if (SelectedFlasks.Count > 0 && SelectedNTarget.ContainsValue(null))
             {
@@ -167,7 +173,6 @@ namespace ThomassPuzzle
                 SelectedFlasks.Add(flask);
                 flask.transform.SetAsLastSibling();
                 flask.MoveUp();
-                flask.SetMovedUp(true);
                 SelectedNTarget.SetForSpecialDic(SelectedFlasks.Count - 1, null);
             }
         }
@@ -182,6 +187,8 @@ namespace ThomassPuzzle
 
             var liquidLine = SetLiquidLine();
             operationModel.SelectedFlask.SetInAction(true);
+            operationModel.SelectedFlask.Button.enabled = false;
+            operationModel.SelectedFlask.ShowQuestions(false,2);
             AnimationHelper.Moving(operationModel.SelectedFlask, operationModel.TargetFlask, CalculateDelayForMoving(operationModel)).OnComplete(() =>
             {
                 Rotation(operationModel,
@@ -226,15 +233,18 @@ namespace ThomassPuzzle
             //It's time for next liquid objects
             if (selectedTopIndex >= 0 && operationModel.TargetLiquidObjects.Any(o => o.GetImage().fillAmount == 0 && o.IsFilled()) &&
                  operationModel.SelectedLiquidObjects[selectedTopIndex].GetColorEnum() == operationModel.TargetLiquidObjects[operationModel.TargetFlask.TopLiquidItemIndex()].GetColorEnum())
+            {
+                operationModel.SelectedFlask.ShowLiquidObject(operationModel.SelectedLiquidObjects[selectedTopIndex]);
                 Rotation(operationModel, selectedTopIndex, liquidLine);
+            }
             else
             {
                 //There is no color for transferring in the flask,so flask needs to return back.
                 //Let's do some quick casting for the last liquid object
                 LiquidObject.delay = .03f;
-                var specialObjs = operationModel.TargetLiquidObjects.Where(o => o.IsFilled() && o.LastFlask == operationModel.SelectedFlask);
+                var specialOBJs = operationModel.TargetLiquidObjects.Where(o => o.IsFilled() && o.LastFlask == operationModel.SelectedFlask);
 
-                yield return new WaitUntil(() => specialObjs.All(o => o.GetImage().fillAmount == 1f));
+                yield return new WaitUntil(() => specialOBJs.All(o => o.GetImage().fillAmount == 1f));
                 LiquidObject.delay = 0;
 
                 RotationBack(operationModel);
@@ -261,7 +271,7 @@ namespace ThomassPuzzle
             o.IsFilled() &&
             o.LastFlask == operationModel.SelectedFlask);
 
-            StartCoroutine(to.MaximazeLiquid());
+            StartCoroutine(to.MaximizeLiquid());
         }
         private LiquidLine SetLiquidLine()
         {
@@ -290,9 +300,22 @@ namespace ThomassPuzzle
                 operationModel.SelectedFlask.GetRatioBound().SetupRect(ref crtRadius, liquidObjects);
             }).OnComplete(() =>
             {
+                if(operationModel.SelectedTopIndex > -1)
+                {
+                    operationModel.SelectedFlask.ShowLiquidObject(operationModel.SelectedLiquidObjects[operationModel.SelectedTopIndex]);
+                    operationModel.SelectedFlask.ShowQuestions(true,operationModel.SelectedTopIndex - 1);
+                    Array.ForEach(operationModel.SelectedFlask.GetLiquidObjects(), b =>
+                    {
+                        Vector2 anchoredPosition = b.GetRect().anchoredPosition;
+                        anchoredPosition.x = 0;
+                        b.GetRect().anchoredPosition = anchoredPosition;
+                    });
+
+                }
+                operationModel.SelectedFlask.Button.enabled = true;
                 EndOperation(SelectedFlasks.IndexOf(operationModel.SelectedFlask));
-                if(gameObject.activeInHierarchy)
-                StartCoroutine(FinishLevel());
+                if (gameObject.activeInHierarchy)
+                    StartCoroutine(FinishLevel());
             });
         }
         private IEnumerator FinishLevel()
@@ -363,7 +386,7 @@ namespace ThomassPuzzle
         }
         private void FillingTargetFlask(OperationModel operationModel, WaterColorEnum comparisonColor)
         {
-            var targetLqdsIndex = operationModel.TargetTopIndex;
+            var targetLQDsIndex = operationModel.TargetTopIndex;
             var liquidObjects = operationModel.SelectedLiquidObjects;
             var topLiquidItemIndex = operationModel.SelectedTopIndex;
 
@@ -380,14 +403,14 @@ namespace ThomassPuzzle
             {
                 ColorModel colorModel = ColorsHelper.GetColor((WaterColorEnum)Enum.Parse(typeof(WaterColorEnum), liquidObjects[topLiquidItemIndex].name));
 
-                targetLqdsIndex++;
-                if (targetLqdsIndex > 3)
+                targetLQDsIndex++;
+                if (targetLQDsIndex > 3)
                     break;
 
-                operationModel.TargetLiquidObjects[targetLqdsIndex].Fill(colorModel, 0);
-                operationModel.TargetLiquidObjects[targetLqdsIndex].LastFlask = operationModel.SelectedFlask;
+                operationModel.TargetLiquidObjects[targetLQDsIndex].Fill(colorModel, 0);
+                operationModel.TargetLiquidObjects[targetLQDsIndex].LastFlask = operationModel.SelectedFlask;
                 saveGamePlay.SelectedLiquidIndex.Push(topLiquidItemIndex);
-                saveGamePlay.TargetLiquidIndex.Push(targetLqdsIndex);
+                saveGamePlay.TargetLiquidIndex.Push(targetLQDsIndex);
 
                 changedSomething = true;
                 topLiquidItemIndex--;
@@ -402,16 +425,16 @@ namespace ThomassPuzzle
         private float CalculateDelayForMoving(OperationModel operationModel)
         {
             int flasksCountInRow = CalculateFlasksCountInRow();
-            if(flasksCountInRow == 0)
+            if (flasksCountInRow == 0)
                 return 0;
             var selectedFlaskIndex = AllFlasks.IndexOf(operationModel.SelectedFlask) + 1;
             var targetFlaskIndex = AllFlasks.IndexOf(operationModel.TargetFlask) + 1;
             //int flasksCountInRow = (int)(rectTransform.rect.width / 150);
 
-            var indexOfselectedColumn = (selectedFlaskIndex % flasksCountInRow == 0 ? flasksCountInRow : selectedFlaskIndex % flasksCountInRow) - 1;
-            var indexOftargetColumn = (targetFlaskIndex % flasksCountInRow == 0 ? flasksCountInRow : targetFlaskIndex % flasksCountInRow) - 1;
+            var indexOfSelectedColumn = (selectedFlaskIndex % flasksCountInRow == 0 ? flasksCountInRow : selectedFlaskIndex % flasksCountInRow) - 1;
+            var indexOfTargetColumn = (targetFlaskIndex % flasksCountInRow == 0 ? flasksCountInRow : targetFlaskIndex % flasksCountInRow) - 1;
 
-            float distance = indexOfselectedColumn - indexOftargetColumn;
+            float distance = indexOfSelectedColumn - indexOfTargetColumn;
 
             distance = distance < 0 ? -distance : distance;
 
@@ -431,16 +454,15 @@ namespace ThomassPuzzle
                 return 5;
             else
             {
-                float splited = (float)activatedFlasksCount / GridLayout.constraintCount;
-                int roundedUp = (int)Math.Ceiling(splited);
+                float divided = (float)activatedFlasksCount / GridLayout.constraintCount;
+                int roundedUp = (int)Math.Ceiling(divided);
                 return roundedUp;
             }
         }
         public void CalculateGridConstraint()
         {
-            int flasksCountInRow = (int)(rectTransform.rect.width / 150);
-
             var activatedFlasksCount = AllFlasks.Count(o => o.isActiveAndEnabled);
+            int flasksCountInRow = (int)(rectTransform.rect.width / (GridLayout.cellSize.x + GridLayout.spacing.x));
 
             if (activatedFlasksCount > 5 && activatedFlasksCount < 10)
             {
@@ -461,8 +483,8 @@ namespace ThomassPuzzle
                 GridLayout.constraintCount = 1;
             }
         }
- 
+
         #endregion
-    
+
     }
 }

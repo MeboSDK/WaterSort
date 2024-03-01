@@ -1525,7 +1525,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Space: {fileID: 1868946088}
   LvlName: {fileID: 951791222}
-  TestLevel: 0
   LvlTitle: {fileID: 951791222}
   WholeLvl: {fileID: 892739013}
   NextLevelPanel: {fileID: 159720310}
@@ -3173,6 +3172,7 @@ MonoBehaviour:
   LiquidLines: []
   GameManager: {fileID: 962255831}
   SelectedFlasks: []
+  DisabledTouch: 0
 --- !u!114 &1868946089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3194,7 +3194,7 @@ MonoBehaviour:
   m_StartCorner: 0
   m_StartAxis: 0
   m_CellSize: {x: 150, y: 300}
-  m_Spacing: {x: 0, y: 0}
+  m_Spacing: {x: 15, y: 40}
   m_Constraint: 0
   m_ConstraintCount: 5
 --- !u!222 &1868946090

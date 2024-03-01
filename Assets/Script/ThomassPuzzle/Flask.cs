@@ -69,12 +69,12 @@ namespace ThomassPuzzle
                     ratio = enami / denami;
 
                 float newHeight = ratio * (end.heigth - start.heigth) + start.heigth;
-                float newx = ratio * (end.x - start.x) + start.x;
-                float newy = ratio * (end.y - start.y) + start.y;
+                float newX = ratio * (end.x - start.x) + start.x;
+                float newY = ratio * (end.y - start.y) + start.y;
 
                 Vector2 pos = rect.localPosition;
-                pos.x = newx * sign;
-                pos.y = newy;
+                pos.x = newX * sign;
+                pos.y = newY;
                 rect.localPosition = pos;
 
                 Vector2 szDelta = rect.sizeDelta;
@@ -104,21 +104,21 @@ namespace ThomassPuzzle
 
         [SerializeField] GameObject FinishedFlask;
 
-        [DoNotSerialize] public Button Button;
+        [SerializeField] public Button Button;
 
         private Vector2 FixedPosition;
 
         private FlasksSpace _parentSpace;
 
-        private List<WaterColorEnum> _choosedColors;
+        private List<WaterColorEnum> _chosenColors;
 
-        private bool MovedUp;
-        private bool InAction;
-        private bool HidedLiquidObjects = false;
+        private bool _movedUp;
+        private bool _inAction;
+        private bool _hidedLiquidObjects = false;
         #endregion
 
         #region  Methods
-        
+
         public void HandleClick()
         {
             _parentSpace.SelectFlask(this);
@@ -138,23 +138,22 @@ namespace ThomassPuzzle
         public void FillFlask()
         {
 
-                for (int i = 0; i < LiquidObjects.Length; i++)
-                {
-                    var color = ColorsHelper.GetColor(_choosedColors[i]);
-                    LiquidObjects[i].Fill(color, 1);
-                    LiquidObjects[i].LastFlask = this;
-                }
-       
-            if(HidedLiquidObjects)
-            {   
+            for (int i = 0; i < LiquidObjects.Length; i++)
+            {
+                var color = ColorsHelper.GetColor(_chosenColors[i]);
+                LiquidObjects[i].Fill(color, 1);
+                LiquidObjects[i].LastFlask = this;
+            }
+
+            if (_hidedLiquidObjects)
+            {
                 var color = ColorsHelper.GetColor(WaterColorEnum.Hide);
                 for (int i = 2; i >= 0; i--)
                 {
-                    LiquidObjects[i].Fill(color,1,true);
-                    LiquidObjects[i].LastFlask = this;
+                    LiquidObjects[i].Fill(color, 1, true);
                 }
             }
-            
+
 
             if (isActiveAndEnabled)
                 CheckFinishedFlask();
@@ -167,8 +166,11 @@ namespace ThomassPuzzle
 
             return -1;
         }
-        public void MoveUp() =>
+        public void MoveUp()
+        {
+            SetMovedUp(true);
             transform.DOMoveY(transform.position.y + .5f, 0.1f);
+        }
         public void MoveDown(float delay = 0.1f)
         {
             Button.enabled = false;
@@ -181,13 +183,12 @@ namespace ThomassPuzzle
         public void ReturnBack(float delay = 0.1f) =>
             RectTransform.DOAnchorPos(FixedPosition, delay).OnComplete(() =>
             {
-                Button.enabled = true;
                 SetMovedUp(false);
                 SetInAction(false);
             });
-        public void SetFlaskSpace(FlasksSpace flastSpace) => _parentSpace = flastSpace;
+        public void SetFlaskSpace(FlasksSpace flaskSpace) => _parentSpace = flaskSpace;
         public LiquidObject[] GetLiquidObjects() => LiquidObjects;
-        public void SetChoosedColors(List<WaterColorEnum> choosedColors) => _choosedColors = choosedColors;
+        public void SetChosenColors(List<WaterColorEnum> chosenColors) => _chosenColors = chosenColors;
         public void SetFixedPosition(Vector2 position) => FixedPosition = position;
         public Vector2 GetFixedPosition() => FixedPosition;
         public RectTransform GetRect() => RectTransform;
@@ -206,7 +207,7 @@ namespace ThomassPuzzle
             }
             if (isActiveAndEnabled)
                 StartCoroutine(FlaskIsFinished(true));
-            
+
             return true;
         }
         public IEnumerator FlaskIsFinished(bool isFinished)
@@ -216,22 +217,29 @@ namespace ThomassPuzzle
 
             FinishedFlask.gameObject.SetActive(isFinished);
         }
-        public void HideLiquidObjects()
+        public void ShowQuestions(bool show,int topIndex)
         {
-            for (int i = 2; i >= 0; i--)
-            {
-                LiquidObjects[i].HideLiquidObject(true);
-            }
+            for (int i = topIndex; i >= 0; i--)
+                LiquidObjects[i].ShowQuestions(show);
 
-            HidedLiquidObjets(true);
+            bool hide = show;
+            HidedLiquidObjects(hide);
         }
-        public bool IsMovedUp() => MovedUp;
-        public void SetMovedUp(bool movedUp) => MovedUp = movedUp;
-        public bool IsInAction() => InAction;
-        public void SetInAction(bool inAction) => InAction = inAction;
-        public void HidedLiquidObjets(bool hided) => HidedLiquidObjects = hided;
-        public bool HidedLiquidObjets() => HidedLiquidObjects;
-        
+
+        public void ShowLiquidObject(LiquidObject liquidObject)
+        {
+            var color = ColorsHelper.GetColor(liquidObject.GetColorEnum());
+
+            liquidObject.Fill(color, 1, false);
+            liquidObject.ShowQuestions(false);
+        }
+
+        public bool IsMovedUp() => _movedUp;
+        public void SetMovedUp(bool movedUp) => _movedUp = movedUp;
+        public bool IsInAction() => _inAction;
+        public void SetInAction(bool inAction) => _inAction = inAction;
+        public void HidedLiquidObjects(bool hided) => _hidedLiquidObjects = hided;
+
         #endregion
 
     }
