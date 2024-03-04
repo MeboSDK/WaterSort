@@ -30,11 +30,18 @@ namespace ThomassPuzzle
         [SerializeField] RectTransform NextLevelPanel;
         [SerializeField] GameObject AllLevelCompleted;
 
+        #region Help Setting
 
-
+        [Space]
+        [Header("Help Setting")]
         [SerializeField] int AddableMaxFlasks;
         [SerializeField] int AddTimeSeconds;
         [SerializeField] int AddTimeCount;
+        [SerializeField] int MaxUndoCount;
+
+        #endregion
+
+        #region Texts
 
         [Space]
         [Header("Texts")]
@@ -43,8 +50,10 @@ namespace ThomassPuzzle
         [SerializeField] TextMeshProUGUI CompletedTimeText;
         [SerializeField] TextMeshProUGUI BonusTimeText;
 
+        #endregion
+
         [SerializeField] TextAsset jsonData;
-        private LevelGroup  _levelData;
+        private LevelGroup _levelData;
 
         private int _addedFlasksCount;
         private int _addedTimesCount;
@@ -63,19 +72,26 @@ namespace ThomassPuzzle
         [SerializeField] Vector2Int EmptyHoldersRange;
         #endregion
 
+        #region FPS Properties
+        [Space]
+        [Header("FPS")]
+        [SerializeField] LimitsEnum Limit;
+        #endregion
         #endregion
 
         #region Methods
         void Start()
         {
+            Application.targetFrameRate = (int)Limit;
+
             //_levelData = JsonUtility.FromJson<LevelGroup>(jsonData.text);
-            _levelData = LevelGeneratorService.GenerateLevels(LevelsCount,ColorsGroupsRange,EmptyHoldersRange);
+            _levelData = LevelGeneratorService.GenerateLevels(LevelsCount, ColorsGroupsRange, EmptyHoldersRange);
 
             PlayerModel.SetPlayerCurrentLvl(1);
 
             GenerateLvl();
         }
- 
+
         public void GenerateLvl()
         {
             NextLevelPanel.gameObject.SetActive(false);
@@ -87,10 +103,10 @@ namespace ThomassPuzzle
             PauseIcon.SetActive(true);
 
             var currentLevel = GetCurrentLvl();
-            
+
             //Write information about level
             LvlName.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
-        
+
             //Set default settings
             _bonusTime = 0;
             _completeTime = 0;
@@ -99,7 +115,7 @@ namespace ThomassPuzzle
             Space.DisabledTouch = false;
 
             Space.CreateFlasks(currentLevel);
-            
+
             Space.CalculateGridConstraint();
 
 
@@ -120,7 +136,7 @@ namespace ThomassPuzzle
             TopPanel.gameObject.SetActive(false);
             PauseIcon.SetActive(false);
             Space.gameObject.SetActive(false);
-            
+
             if (_levelData.levels.Count == PlayerModel.CurrentLevel)
                 AllLevelCompleted.SetActive(true);
             else
@@ -149,7 +165,6 @@ namespace ThomassPuzzle
         private Level GetCurrentLvl()
         {
             var playerCurrentLvl = PlayerModel.CurrentLevel;
-            playerCurrentLvl = 3;
             var level = _levelData.FirstOrDefault(o => o.lvl == playerCurrentLvl);
 
             return level;
@@ -163,7 +178,7 @@ namespace ThomassPuzzle
                                 time.Minutes,
                                 time.Seconds);
 
-           
+
             if (formattedTime.StartsWith(":"))
                 formattedTime = formattedTime.Remove(0, 1);
 
@@ -175,12 +190,11 @@ namespace ThomassPuzzle
             {
                 TimeLimit.text = ToFormattedTime(_seconds);
 
+                yield return new WaitForSeconds(1f);
+
                 _seconds--;
                 _completeTime++;
                 _totalTime++;
-
-
-                yield return new WaitForSeconds(1f);
             }
             print(_completeTime);
             print(_totalTime);
@@ -196,6 +210,11 @@ namespace ThomassPuzzle
         #region Buttons
         public void UndoActionButton()
         {
+            if (MaxUndoCount > 0)
+                MaxUndoCount--;
+            else
+                return;
+
             if (NextLevelPanel.gameObject.activeSelf)
                 return;
 
@@ -251,7 +270,7 @@ namespace ThomassPuzzle
                 return;
 
             //Logic of ad
-                Debug.Log("Add Seconds Button Ad Logic here");
+            Debug.Log("Add Seconds Button Ad Logic here");
             //End 
 
             _seconds += AddTimeSeconds;
@@ -262,7 +281,7 @@ namespace ThomassPuzzle
         {
             if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)
                 ++PlayerModel.CurrentLevel;
-            
+
             TMGameService.ClearSavedActions();
 
             GenerateLvl();
@@ -282,7 +301,7 @@ namespace ThomassPuzzle
         public void LeaveButton()
         {
             //Logic of leave
-               Debug.Log("Leave logic here");
+            Debug.Log("Leave logic here");
             //End 
         }
         public void LevelFailedButton()

@@ -3788,6 +3788,7 @@ MonoBehaviour:
   AddableMaxFlasks: 1
   AddTimeSeconds: 15
   AddTimeCount: 1
+  MaxUndoCount: 3
   CompletedTotalTimeText: {fileID: 1682942857}
   FailedTotalTimeText: {fileID: 2018936431}
   CompletedTimeText: {fileID: 240993918}
@@ -3796,6 +3797,8 @@ MonoBehaviour:
   LevelsCount: 3
   ColorsGroupsRange: {x: 5, y: 6}
   EmptyHoldersRange: {x: 2, y: 2}
+  Limit: 60
+  FpsText: {fileID: 0}
 --- !u!224 &962255832
 RectTransform:
   m_ObjectHideFlags: 0
