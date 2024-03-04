@@ -13,7 +13,7 @@ namespace ThomassPuzzle.Extensions
         public static T GetRandom<T>(this IEnumerable<T> enumerable, out int index)
         {
             var list = enumerable.ToList();
-            index = Random.Range(0, list.Count);
+            index = Random.Range(0, list.Count - 1);
             return list[index];
         }
         public static T GetRandom<T>(this IEnumerable<T> enumerable) =>

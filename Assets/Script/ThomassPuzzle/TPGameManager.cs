@@ -23,19 +23,28 @@ namespace ThomassPuzzle
         [SerializeField] TextMeshProUGUI LvlTitle;
         [SerializeField] TextMeshProUGUI TimeLimit;
 
-        // [SerializeField] TextMeshProUGUI WholeLvl;
-        [SerializeField] RectTransform NextLevelPanel;
-        [SerializeField] RectTransform GameOverPanel;
-        [SerializeField] RectTransform TopPanel;
+        [SerializeField] GameObject TopPanel;
         [SerializeField] RectTransform PauseLevelPanel;
+        [SerializeField] GameObject PauseIcon;
+        [SerializeField] RectTransform GameOverPanel;
+        [SerializeField] RectTransform NextLevelPanel;
+        [SerializeField] GameObject AllLevelCompleted;
+
+
+
         [SerializeField] int AddableMaxFlasks;
         [SerializeField] int AddTimeSeconds;
         [SerializeField] int AddTimeCount;
 
+        [Space]
+        [Header("Texts")]
+        [SerializeField] TextMeshProUGUI CompletedTotalTimeText;
+        [SerializeField] TextMeshProUGUI FailedTotalTimeText;
+        [SerializeField] TextMeshProUGUI CompletedTimeText;
+        [SerializeField] TextMeshProUGUI BonusTimeText;
 
-        public TextAsset jsonData;
-        private LevelGroup _levelData;
-        private bool _topPanelButtonsAreDisabled;
+        [SerializeField] TextAsset jsonData;
+        private LevelGroup  _levelData;
 
         private int _addedFlasksCount;
         private int _addedTimesCount;
@@ -43,9 +52,8 @@ namespace ThomassPuzzle
         private int _seconds;
         private int _bonusTime;
         private int _completeTime;
+        private int _totalTime;
 
-
-        private bool _pausedGame { get; set; }
 
         #region Level Generator
         [Space]
@@ -54,16 +62,6 @@ namespace ThomassPuzzle
         [SerializeField] Vector2Int ColorsGroupsRange;
         [SerializeField] Vector2Int EmptyHoldersRange;
         #endregion
-        
-        // #region FPS Properties
-        // [Space]
-        // [Header("FPS")]
-        // [SerializeField] LimitsEnum Limit;
-        // [SerializeField] TextMeshProUGUI FpsText;
-        // private float pollingTime = 1f;
-        // private float time;
-        // private int frameCount;
-        // #endregion
 
         #endregion
 
@@ -80,52 +78,53 @@ namespace ThomassPuzzle
  
         public void GenerateLvl()
         {
-            //Turn off next level pop up
             NextLevelPanel.gameObject.SetActive(false);
-            //Turn on space for flasks
-            Space.gameObject.SetActive(true);
+            GameOverPanel.gameObject.SetActive(false);
+            AllLevelCompleted.gameObject.SetActive(false);
 
-            //Write information about level
-            LvlName.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
-            
-            // WholeLvl.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
+            Space.gameObject.SetActive(true);
+            TopPanel.gameObject.SetActive(true);
+            PauseIcon.SetActive(true);
 
             var currentLevel = GetCurrentLvl();
+            
+            //Write information about level
+            LvlName.text = PlayerModel.CurrentLevel.ToString() + "/" + _levelData.Count();
         
             //Set default settings
-            _pausedGame = false;
             _bonusTime = 0;
             _completeTime = 0;
             _seconds += currentLevel.timeLimit;
-            _topPanelButtonsAreDisabled = false;
 
             Space.DisabledTouch = false;
 
             Space.CreateFlasks(currentLevel);
             
             Space.CalculateGridConstraint();
-            
-            GameOverPanel.gameObject.SetActive(false);
-            
+
+
             StartCoroutine(MinusTime());
         }
-        public void DoneLevel()
+        public void LevelCompleted()
         {
             StopAllCoroutines();
+
             _bonusTime = _seconds;
+
             TimeLimit.text = ToFormattedTime(_seconds);
-            NextLevelPanel.gameObject.SetActive(true);
+
+            CompletedTimeText.text = ToFormattedTime(_completeTime);
+            BonusTimeText.text = ToFormattedTime(_bonusTime);
+            CompletedTotalTimeText.text = ToFormattedTime(_totalTime);
+
             TopPanel.gameObject.SetActive(false);
-
-            Space.AllFlasks.ForEach(f =>
-            {
-                if (f.isActiveAndEnabled)
-                    f.gameObject.SetActive(false);
-            });
-            Space.LiquidLines.ForEach(l => l.gameObject.SetActive(false));
-
-            _topPanelButtonsAreDisabled = true;
-            _pausedGame = true;
+            PauseIcon.SetActive(false);
+            Space.gameObject.SetActive(false);
+            
+            if (_levelData.levels.Count == PlayerModel.CurrentLevel)
+                AllLevelCompleted.SetActive(true);
+            else
+                NextLevelPanel.gameObject.SetActive(true);
         }
         public bool IsLvlDone(List<Flask> flasks)
         {
@@ -138,22 +137,21 @@ namespace ThomassPuzzle
         {
             TMGameService.RestartActions();
 
-            Space.AllFlasks.ForEach(f =>
-            {
-                if (f.isActiveAndEnabled)
-                    f.gameObject.SetActive(false);
-            });
-            Space.LiquidLines.ForEach(l => l.gameObject.SetActive(false));
+            TopPanel.SetActive(false);
 
+            print(_totalTime);
+            FailedTotalTimeText.text = ToFormattedTime(_totalTime);
+
+            Space.gameObject.SetActive(false);
             GameOverPanel.gameObject.SetActive(true);
-            _topPanelButtonsAreDisabled = true;
+            PauseIcon.SetActive(false);
         }
         private Level GetCurrentLvl()
         {
             var playerCurrentLvl = PlayerModel.CurrentLevel;
-            //var playerCurrentLvl = 3;
-
+            playerCurrentLvl = 3;
             var level = _levelData.FirstOrDefault(o => o.lvl == playerCurrentLvl);
+
             return level;
         }
         private static string ToFormattedTime(int seconds)
@@ -165,34 +163,32 @@ namespace ThomassPuzzle
                                 time.Minutes,
                                 time.Seconds);
 
-            // Remove hours and minutes if they are zero
-            formattedTime = formattedTime.TrimStart('0', ':');
+           
             if (formattedTime.StartsWith(":"))
-            {
                 formattedTime = formattedTime.Remove(0, 1);
-            }
 
             return formattedTime;
         }
         private IEnumerator MinusTime()
         {
-            while (_seconds >= 0)
+            while (_seconds > 0)
             {
-                if (_pausedGame)
-                    yield return new WaitUntil(() => !_pausedGame);
-
                 TimeLimit.text = ToFormattedTime(_seconds);
 
                 _seconds--;
                 _completeTime++;
+                _totalTime++;
+
 
                 yield return new WaitForSeconds(1f);
             }
+            print(_completeTime);
+            print(_totalTime);
             Space.DisabledTouch = true;
             yield return new WaitUntil(() => !Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()));
 
             if (IsLvlDone(Space.AllFlasks.Where(o => o.isActiveAndEnabled).ToList()))
-                DoneLevel();
+                LevelCompleted();
             else
                 FailedLevel();
         }
@@ -200,9 +196,6 @@ namespace ThomassPuzzle
         #region Buttons
         public void UndoActionButton()
         {
-            if (_topPanelButtonsAreDisabled)
-                return;
-
             if (NextLevelPanel.gameObject.activeSelf)
                 return;
 
@@ -215,9 +208,6 @@ namespace ThomassPuzzle
         }
         public void AddFlaskButton()
         {
-            if (_topPanelButtonsAreDisabled)
-                return;
-
             if (NextLevelPanel.gameObject.activeSelf)
                 return;
 
@@ -248,42 +238,12 @@ namespace ThomassPuzzle
         }
         public void PauseButton()
         {
-            if (_topPanelButtonsAreDisabled)
-                return;
-
-            if (NextLevelPanel.gameObject.activeSelf)
-                return;
-
-            if (Space.SelectedFlasks.Exists(o => o != null && o.IsInAction()))
-                return;
-
-            //Logic of ad
-            Debug.Log("Pause Button Ad Logic here");
-
-
-            //End 
-
-            var selectedFlask = Space.SelectedFlasks.FirstOrDefault(o => o != null && !o.IsInAction() && o.IsMovedUp());
-
-            if (selectedFlask != default)
-                Space.FailedTry(selectedFlask);
-
-            _topPanelButtonsAreDisabled = true;
-            _pausedGame = true;
-
-
-            Space.AllFlasks.ForEach(o =>
-            {
-                if (o.isActiveAndEnabled)
-                    o.Button.enabled = false;
-            });
-
+            Time.timeScale = 0;
+            PauseLevelPanel.gameObject.SetActive(true);
+            PauseIcon.SetActive(false);
         }
         public void AddSecondsButton()
         {
-            if (_topPanelButtonsAreDisabled)
-                return;
-
             if (NextLevelPanel.gameObject.activeSelf)
                 return;
 
@@ -300,10 +260,9 @@ namespace ThomassPuzzle
         public void ResetSceneButton() => SceneManager.LoadScene("ThomassPuzzle");
         public void NextLevelButton()
         {
-            TopPanel.gameObject.SetActive(true);
             if (_levelData.levels.Count >= PlayerModel.CurrentLevel + 1)
                 ++PlayerModel.CurrentLevel;
-
+            
             TMGameService.ClearSavedActions();
 
             GenerateLvl();
@@ -316,16 +275,21 @@ namespace ThomassPuzzle
         }
         public void ContinueButton()
         {
-            _topPanelButtonsAreDisabled = false;
-            _pausedGame = false;
             PauseLevelPanel.gameObject.SetActive(false);
-
-            Space.AllFlasks.ForEach(o =>
-            {
-                if (o.isActiveAndEnabled)
-                    o.Button.enabled = true;
-            });
-
+            PauseIcon.SetActive(true);
+            Time.timeScale = 1;
+        }
+        public void LeaveButton()
+        {
+            //Logic of leave
+               Debug.Log("Leave logic here");
+            //End 
+        }
+        public void LevelFailedButton()
+        {
+            PauseLevelPanel.gameObject.SetActive(false);
+            PauseIcon.SetActive(false);
+            TopPanel.SetActive(false);
         }
 
         #endregion

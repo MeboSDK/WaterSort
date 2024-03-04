@@ -115,7 +115,7 @@ namespace ThomassPuzzle.Helpers
                 case WaterColorEnum.Brass:
                     return FindColorByHex("#a2a344");
                 case WaterColorEnum.Hide:
-                    return FindColorByHex("#808080");
+                    return FindColorByHex("#a0a0a0");
                 default:
                     return Color.white;
             }

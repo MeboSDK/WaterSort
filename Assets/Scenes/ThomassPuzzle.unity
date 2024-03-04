@@ -205,18 +205,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 962255833}
-        m_TargetAssemblyTypeName: UiManager, Assembly-CSharp
-        m_MethodName: CloseExitPopUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 962255831}
         m_TargetAssemblyTypeName: ThomassPuzzle.TPGameManager, Assembly-CSharp
         m_MethodName: ContinueButton
@@ -349,7 +337,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 35989190}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 962255831}
+        m_TargetAssemblyTypeName: ThomassPuzzle.TPGameManager, Assembly-CSharp
+        m_MethodName: LeaveButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &35989190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -629,7 +629,7 @@ GameObject:
   - component: {fileID: 130553999}
   - component: {fileID: 130553998}
   m_Layer: 5
-  m_Name: TopText
+  m_Name: Top Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -838,7 +838,7 @@ GameObject:
   - component: {fileID: 157649635}
   - component: {fileID: 157649634}
   m_Layer: 5
-  m_Name: Totaltime
+  m_Name: Total time
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1110,12 +1110,11 @@ RectTransform:
   m_Children:
   - {fileID: 130553997}
   - {fileID: 718640647}
-  - {fileID: 1432499127}
   - {fileID: 961559936}
+  - {fileID: 1432499127}
   - {fileID: 293745769}
   - {fileID: 467406088}
   - {fileID: 1521606353}
-  - {fileID: 1808919893}
   m_Father: {fileID: 830130855}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1136,7 +1135,7 @@ GameObject:
   - component: {fileID: 259214597}
   - component: {fileID: 259214596}
   m_Layer: 5
-  m_Name: NoThanksButton
+  m_Name: No Thanks Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1202,10 +1201,22 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 1622001645}
+  m_TargetGraphic: {fileID: 259214597}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 962255831}
+        m_TargetAssemblyTypeName: ThomassPuzzle.TPGameManager, Assembly-CSharp
+        m_MethodName: LeaveButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &259214597
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1257,7 +1268,7 @@ GameObject:
   - component: {fileID: 293745771}
   - component: {fileID: 293745770}
   m_Layer: 5
-  m_Name: NoThanksButton
+  m_Name: No Thanks Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1323,10 +1334,22 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 961559933}
+  m_TargetGraphic: {fileID: 293745771}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 962255831}
+        m_TargetAssemblyTypeName: ThomassPuzzle.TPGameManager, Assembly-CSharp
+        m_MethodName: LeaveButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &293745771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1676,7 +1699,7 @@ GameObject:
   - component: {fileID: 500605939}
   - component: {fileID: 500605938}
   m_Layer: 5
-  m_Name: TopText
+  m_Name: Top Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2697,18 +2720,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 962255833}
-        m_TargetAssemblyTypeName: UiManager, Assembly-CSharp
-        m_MethodName: CloseExitPopUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 962255831}
         m_TargetAssemblyTypeName: ThomassPuzzle.TPGameManager, Assembly-CSharp
         m_MethodName: ContinueButton
@@ -2771,7 +2782,7 @@ GameObject:
   - component: {fileID: 824530352}
   - component: {fileID: 824530351}
   m_Layer: 5
-  m_Name: VideoIcon
+  m_Name: Video Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3089,7 +3100,7 @@ GameObject:
   - component: {fileID: 911286067}
   - component: {fileID: 911286066}
   m_Layer: 5
-  m_Name: LevelTxt
+  m_Name: Level Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3625,7 +3636,7 @@ GameObject:
   - component: {fileID: 961559933}
   - component: {fileID: 961559934}
   m_Layer: 5
-  m_Name: 'VideoButton '
+  m_Name: 'Video Button '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3732,7 +3743,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -122, y: -18.999992}
+  m_AnchoredPosition: {x: -122, y: -18.999931}
   m_SizeDelta: {x: 300, y: 125.01}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &962255830
@@ -3745,7 +3756,6 @@ GameObject:
   m_Component:
   - component: {fileID: 962255832}
   - component: {fileID: 962255831}
-  - component: {fileID: 962255833}
   m_Layer: 0
   m_Name: TPGameManager
   m_TagString: Untagged
@@ -3769,13 +3779,19 @@ MonoBehaviour:
   LvlName: {fileID: 911286066}
   LvlTitle: {fileID: 1526227014}
   TimeLimit: {fileID: 1950789996}
-  NextLevelPanel: {fileID: 159720310}
-  GameOverPanel: {fileID: 1817179134}
-  TopPanel: {fileID: 1551597949}
+  TopPanel: {fileID: 1551597948}
   PauseLevelPanel: {fileID: 357905246}
+  PauseIcon: {fileID: 1603032127}
+  GameOverPanel: {fileID: 1817179134}
+  NextLevelPanel: {fileID: 159720310}
+  AllLevelCompleted: {fileID: 242774936}
   AddableMaxFlasks: 1
   AddTimeSeconds: 15
   AddTimeCount: 1
+  CompletedTotalTimeText: {fileID: 1682942857}
+  FailedTotalTimeText: {fileID: 2018936431}
+  CompletedTimeText: {fileID: 240993918}
+  BonusTimeText: {fileID: 733410734}
   jsonData: {fileID: 4900000, guid: 20bb940d505b42748b1bde98c0e94cb0, type: 3}
   LevelsCount: 3
   ColorsGroupsRange: {x: 5, y: 6}
@@ -3799,21 +3815,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &962255833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 962255830}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a4af810af2ad874aaea20d1552b45f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ExitPanel: {fileID: 357905245}
-  Pauseicon: {fileID: 1603032127}
-  TopPanel: {fileID: 1551597948}
 --- !u!1 &968872157
 GameObject:
   m_ObjectHideFlags: 0
@@ -5431,7 +5432,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1808919893}
   m_Father: {fileID: 242774937}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
@@ -5628,7 +5630,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1551597949
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5984,12 +5986,12 @@ GameObject:
   - component: {fileID: 1603032130}
   - component: {fileID: 1603032129}
   m_Layer: 5
-  m_Name: PauseIcon
+  m_Name: Pause Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1603032128
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6053,18 +6055,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 962255833}
-        m_TargetAssemblyTypeName: UiManager, Assembly-CSharp
-        m_MethodName: ExitpopUp
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 962255831}
         m_TargetAssemblyTypeName: ThomassPuzzle.TPGameManager, Assembly-CSharp
         m_MethodName: PauseButton
@@ -6128,7 +6118,7 @@ GameObject:
   - component: {fileID: 1622001645}
   - component: {fileID: 1622001646}
   m_Layer: 5
-  m_Name: VideoButton
+  m_Name: Video Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6821,7 +6811,7 @@ GameObject:
   - component: {fileID: 1808919895}
   - component: {fileID: 1808919894}
   m_Layer: 5
-  m_Name: KeyAmountTxt
+  m_Name: Key Amount Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6834,16 +6824,16 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1808919892}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 242774937}
+  m_Father: {fileID: 1521606353}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: 298, y: 342.2}
+  m_AnchoredPosition: {x: -15.3750305, y: -82.619965}
   m_SizeDelta: {x: 106.01, y: 77.08}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1808919894
@@ -6960,7 +6950,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1817179134
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7593,7 +7583,7 @@ GameObject:
   - component: {fileID: 1950789995}
   - component: {fileID: 1950789996}
   m_Layer: 5
-  m_Name: TimeTxt
+  m_Name: Time Txt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

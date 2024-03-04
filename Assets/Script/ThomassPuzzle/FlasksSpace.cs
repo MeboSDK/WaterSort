@@ -317,7 +317,7 @@ namespace ThomassPuzzle
             if (!SelectedFlasks.Exists(o => o?.GetFixedPosition() != o?.GetRect().anchoredPosition) && GameManager.IsLvlDone(AllFlasks))
             {
                 yield return new WaitForSeconds(.5f);
-                GameManager.DoneLevel();
+                GameManager.LevelCompleted();
             }
         }
         private void EndOperation(int selectedIndex = 0)

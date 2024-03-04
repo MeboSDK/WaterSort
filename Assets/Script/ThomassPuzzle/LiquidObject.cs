@@ -15,7 +15,9 @@ namespace ThomassPuzzle
         [SerializeField] Image Image;
         [SerializeField] bool Filled;
         [SerializeField] GameObject QuestionImage;
+        [SerializeField] GameObject QuestionText;
         [SerializeField] RectTransform Rect;
+        
         private WaterColorEnum colorEnum;
         public Flask LastFlask;
         public static float delay = 0;
@@ -89,9 +91,9 @@ namespace ThomassPuzzle
         public void ShowQuestions(bool show)
         {
             if (show)
-                QuestionImage.SetActive(true);
+                QuestionText.SetActive(true);
             else
-                QuestionImage.SetActive(false);
+                QuestionText.SetActive(false);
         }
 
         public void ShowLiquidObject(bool show)
